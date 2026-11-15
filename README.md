@@ -4,23 +4,6 @@
 
 - 仓库：<https://github.com/SteveWey/SteveWey.github.io>
 - 线上地址：<https://SteveWey.github.io/>
-- 本地开发：<http://127.0.0.1:4321/>
-
-## 本地开发
-
-```bash
-npm install
-npm run dev
-```
-
-打开终端提示的地址（默认 <http://localhost:4321>）。
-
-```bash
-npm run build    # 生成 dist/
-npm run preview  # 预览构建产物
-```
-
-> Windows 下如果 Astro 因遥测目录报权限错误，可先设置 `ASTRO_TELEMETRY_DISABLED=1`。
 
 ## 页面
 
