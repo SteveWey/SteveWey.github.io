@@ -3,7 +3,7 @@ export const site = {
   subtitle: "PERSONAL WEBSITE",
   description: "一个自用的个人网站：主线、笔记、摘抄、收藏和音乐。",
   lastUpdated: "2026-11-15",
-  github: "https://github.com/",
+  github: "https://github.com/SteveWey",
 };
 
 export const homeNav = [
