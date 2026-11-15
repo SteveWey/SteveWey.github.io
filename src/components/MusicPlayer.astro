@@ -1,6 +1,7 @@
 ---
 import type { MusicEntry } from "../lib/content";
 import { withBase } from "../lib/url";
+import MusicLyrics from "./MusicLyrics.astro";
 
 interface Props {
   tracks: MusicEntry[];
@@ -40,6 +41,7 @@ const firstCover = first.data.cover ? withBase(first.data.cover) : "";
               </span>
             </div>
           </div>
+          <MusicLyrics src={first.data.lyrics ? withBase(first.data.lyrics) : ""} />
         </div>
 
         {showList && (
@@ -75,16 +77,7 @@ const firstCover = first.data.cover ? withBase(first.data.cover) : "";
       </>
     )}
 
-    <div
-      class="music-lyrics"
-      data-lyrics
-      data-lyrics-src={first.data.lyrics ? withBase(first.data.lyrics) : ""}
-      hidden
-    >
-      <p class="lyric-line lyric-prev" data-lyric-prev></p>
-      <p class="lyric-line lyric-current" data-lyric-current></p>
-      <p class="lyric-line lyric-next" data-lyric-next></p>
-    </div>
+    {minimal && <MusicLyrics src={first.data.lyrics ? withBase(first.data.lyrics) : ""} />}
 
     <audio id="music-audio" preload="metadata" src={withBase(first.data.audio)}></audio>
 

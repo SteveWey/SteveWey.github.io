@@ -1,0 +1,12 @@
+---
+interface Props {
+  src?: string;
+}
+const { src = "" } = Astro.props;
+---
+
+<div class="music-lyrics" data-lyrics data-lyrics-src={src} hidden>
+  <div class="lyrics-viewport">
+    <div class="lyrics-track" data-lyrics-track></div>
+  </div>
+</div>

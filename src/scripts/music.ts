@@ -10,9 +10,7 @@ const musicArt = document.querySelector<HTMLElement>(".music-art");
 const miniCover = document.querySelector<HTMLElement>(".mini-player-cover");
 const trackRows = [...document.querySelectorAll<HTMLButtonElement>("[data-track]")];
 const lyricsBlock = document.querySelector<HTMLElement>("[data-lyrics]");
-const lyricPrev = document.querySelector<HTMLElement>("[data-lyric-prev]");
-const lyricCurrent = document.querySelector<HTMLElement>("[data-lyric-current]");
-const lyricNext = document.querySelector<HTMLElement>("[data-lyric-next]");
+const lyricsTrack = document.querySelector<HTMLElement>("[data-lyrics-track]");
 
 type LyricLine = { time: number; text: string };
 let lyricLines: LyricLine[] = [];
@@ -42,44 +40,87 @@ function parseLrc(source: string): LyricLine[] {
   return lines.sort((a, b) => a.time - b.time);
 }
 
+function buildLyricsTrack(): void {
+  if (!lyricsTrack) return;
+  lyricsTrack.replaceChildren(
+    ...lyricLines.map((line) => {
+      const element = document.createElement("p");
+      element.className = "lyric-line";
+      element.textContent = line.text;
+      return element;
+    })
+  );
+}
+
+function positionLyrics(index: number, animate: boolean): void {
+  if (!lyricsBlock || !lyricsTrack || lyricLines.length === 0) return;
+
+  const safeIndex = Math.max(0, Math.min(index, lyricLines.length - 1));
+  const lines = [...lyricsTrack.querySelectorAll<HTMLElement>(".lyric-line")];
+  lines.forEach((line, lineIndex) => {
+    line.classList.toggle("is-current", lineIndex === safeIndex);
+    line.classList.toggle("is-prev", lineIndex === safeIndex - 1);
+    line.classList.toggle("is-next", lineIndex === safeIndex + 1);
+  });
+
+  if (!animate) lyricsTrack.style.transition = "none";
+  lyricsTrack.style.transform = `translateY(calc(${1 - safeIndex} * var(--lyric-line-height)))`;
+  if (!animate) {
+    void lyricsTrack.offsetHeight;
+    lyricsTrack.style.transition = "";
+  }
+}
+
 function renderLyrics(current: number): void {
   if (!lyricsBlock || lyricLines.length === 0) return;
 
-  let index = -1;
+  let index = 0;
   for (let i = 0; i < lyricLines.length; i += 1) {
     if (lyricLines[i].time <= current + 0.25) index = i;
     else break;
   }
 
-  if (lyricPrev) lyricPrev.textContent = index > 0 ? lyricLines[index - 1].text : "";
-  if (lyricCurrent) lyricCurrent.textContent = index >= 0 ? lyricLines[index].text : "·";
-  if (lyricNext) {
-    lyricNext.textContent =
-      index < 0
-        ? lyricLines[0].text
-        : index < lyricLines.length - 1
-          ? lyricLines[index + 1].text
-          : "";
-  }
+  positionLyrics(index, true);
 }
 
 async function loadLyrics(src: string): Promise<void> {
   const request = ++lyricRequest;
+  const hadLyrics = Boolean(lyricsBlock && !lyricsBlock.hidden && lyricLines.length > 0);
   lyricLines = [];
-  if (lyricsBlock) lyricsBlock.hidden = true;
 
-  if (!src) return;
+  if (!src) {
+    if (lyricsBlock) lyricsBlock.hidden = true;
+    lyricsTrack?.replaceChildren();
+    return;
+  }
 
   try {
     const response = await fetch(src);
-    if (!response.ok) return;
+    if (!response.ok) {
+      if (request === lyricRequest && lyricsBlock) {
+        lyricsBlock.hidden = true;
+        lyricsTrack?.replaceChildren();
+      }
+      return;
+    }
     const data = parseLrc(await response.text());
-    if (request !== lyricRequest || data.length === 0) return;
+    if (request !== lyricRequest || data.length === 0) {
+      if (request === lyricRequest && lyricsBlock) {
+        lyricsBlock.hidden = true;
+        lyricsTrack?.replaceChildren();
+      }
+      return;
+    }
     lyricLines = data;
+    buildLyricsTrack();
     if (lyricsBlock) lyricsBlock.hidden = false;
     if (audio) renderLyrics(audio.currentTime || 0);
+    if (!hadLyrics) positionLyrics(0, false);
   } catch {
-    // 没有歌词或歌词文件不可读时保持隐藏。
+    if (request === lyricRequest && lyricsBlock) {
+      lyricsBlock.hidden = true;
+      lyricsTrack?.replaceChildren();
+    }
   }
 }
 
