@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1f3048"/>
+      <stop offset="0.6" stop-color="#3f5578"/>
+      <stop offset="1" stop-color="#8ca0b8"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="600" fill="url(#bg)"/>
+  <circle cx="120" cy="470" r="190" fill="none" stroke="#fffdf8" stroke-opacity=".18" stroke-width="1"/>
+  <circle cx="120" cy="470" r="122" fill="none" stroke="#fffdf8" stroke-opacity=".12" stroke-width="1"/>
+  <path d="M0 120 C180 70 300 210 600 150" fill="none" stroke="#fffdf8" stroke-opacity=".18" stroke-width="1"/>
+  <text x="300" y="360" text-anchor="middle" fill="#fffdf8" fill-opacity=".92" font-family="Songti SC, STSong, Noto Serif CJK SC, serif" font-size="250">夜</text>
+  <text x="56" y="512" fill="#fffdf8" font-family="Songti SC, STSong, Noto Serif CJK SC, serif" font-size="34" letter-spacing="3">蓝色夜曲</text>
+  <text x="56" y="552" fill="#fffdf8" fill-opacity=".7" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="20" letter-spacing="6">李健</text>
+</svg>

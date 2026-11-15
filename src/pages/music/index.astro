@@ -1,0 +1,24 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import MusicPlayer from "../../components/MusicPlayer.astro";
+import TagFilter from "../../components/TagFilter.astro";
+import { getMusic, tagCounts } from "../../lib/content";
+
+const tracks = await getMusic();
+const tags = [...tagCounts(tracks).entries()];
+---
+
+<BaseLayout title="音乐库 · 个人网页" active="music" path="LIBRARY / MUSIC">
+  <div class="overview-page">
+    <header class="overview-head">
+      <p class="overview-kicker">MUSIC / {String(tracks.length).padStart(2, "0")}</p>
+      <h1 class="overview-title">音乐库</h1>
+      <p class="overview-desc">收藏的音乐，本地存放。</p>
+      <TagFilter tags={tags} total={tracks.length} />
+    </header>
+
+    <section id="music" class="overview-list">
+      <MusicPlayer tracks={tracks} />
+    </section>
+  </div>
+</BaseLayout>

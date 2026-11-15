@@ -1,4 +1,4 @@
-# Dependencies
+﻿# Dependencies
 node_modules/
 .pnpm-store/
 
@@ -30,5 +30,5 @@ docs/
 # Local visual review output
 screenshots/
 
-.flac
-music/
+*.flac
+/music/
