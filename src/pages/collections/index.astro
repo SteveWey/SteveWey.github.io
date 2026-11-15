@@ -8,7 +8,7 @@ const collections = await getCollections();
 const tags = [...tagCounts(collections).entries()];
 ---
 
-<BaseLayout title="收藏 · 个人网页" active="collections" path="LIBRARY / COLLECTIONS">
+<BaseLayout title="收藏 · 个人博客" active="collections" path="LIBRARY / COLLECTIONS">
   <div class="overview-page">
     <header class="overview-head">
       <p class="overview-kicker">COLLECTIONS / {String(collections.length).padStart(2, "0")}</p>

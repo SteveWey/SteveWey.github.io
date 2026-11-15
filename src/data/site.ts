@@ -1,7 +1,7 @@
 export const site = {
-  title: "个人网页",
-  subtitle: "PERSONAL WEBSITE",
-  description: "一个自用的个人网站：主线、笔记、摘抄、收藏和音乐。",
+  title: "个人博客",
+  subtitle: "PERSONAL BLOG",
+  description: "一个自用的个人博客：主线、笔记、摘抄、收藏和音乐。",
   lastUpdated: "2026-11-15",
   github: "https://github.com/SteveWey",
 };

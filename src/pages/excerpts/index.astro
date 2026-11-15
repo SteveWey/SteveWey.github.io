@@ -8,7 +8,7 @@ const excerpts = await getExcerpts();
 const tags = [...tagCounts(excerpts).entries()];
 ---
 
-<BaseLayout title="摘录 · 个人网页" active="excerpts" path="LIBRARY / EXCERPTS">
+<BaseLayout title="摘录 · 个人博客" active="excerpts" path="LIBRARY / EXCERPTS">
   <div class="overview-page">
     <header class="overview-head">
       <p class="overview-kicker">EXCERPTS / {String(excerpts.length).padStart(2, "0")}</p>

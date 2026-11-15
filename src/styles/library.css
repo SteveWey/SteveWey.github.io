@@ -1783,12 +1783,14 @@ body[data-page="note"] .palette-panel {
 }
 
 .note-aside {
+  position: sticky;
+  top: calc(var(--header-height) + 22px);
+  align-self: start;
   min-width: 0;
 }
 
 .note-info {
-  position: sticky;
-  top: 82px;
+  position: static;
   padding: 16px;
   border: 1px solid var(--color-line);
   border-radius: var(--radius-md);
@@ -1833,8 +1835,7 @@ body[data-page="note"] .palette-panel {
 }
 
 .note-toc {
-  position: sticky;
-  top: 82px;
+  position: static;
   margin-top: 20px;
   padding-top: 16px;
   border-top: 1px solid var(--color-line);
@@ -2087,6 +2088,7 @@ body.sidebar-open .palette-fab {
   }
 
   .note-aside {
+    position: static;
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 16px;

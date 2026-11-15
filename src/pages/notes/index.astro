@@ -8,7 +8,7 @@ const notes = await getNotes();
 const tags = [...tagCounts(notes).entries()];
 ---
 
-<BaseLayout title="笔记 · 个人网页" active="notes" path="LIBRARY / NOTES">
+<BaseLayout title="笔记 · 个人博客" active="notes" path="LIBRARY / NOTES">
   <div class="overview-page">
     <header class="overview-head">
       <p class="overview-kicker">NOTES / {String(notes.length).padStart(2, "0")}</p>
