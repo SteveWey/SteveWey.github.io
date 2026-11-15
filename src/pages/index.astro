@@ -1,0 +1,111 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ThreadTree from "../components/ThreadTree.astro";
+import ActivityFeed from "../components/ActivityFeed.astro";
+import MusicPlayer from "../components/MusicPlayer.astro";
+import ExcerptCard from "../components/ExcerptCard.astro";
+import CollectionRow from "../components/CollectionRow.astro";
+import NoteRow from "../components/NoteRow.astro";
+import StudyCard from "../components/StudyCard.astro";
+import { getThreadsWithNotes, recentActivity, getFavoriteMusic, getExcerpts, getCollections, getNotes } from "../lib/content";
+import { withBase } from "../lib/url";
+
+const [threads, activity, favorites, excerpts, collections, notes] = await Promise.all([
+  getThreadsWithNotes(),
+  recentActivity(6),
+  getFavoriteMusic(),
+  getExcerpts(),
+  getCollections(),
+  getNotes(),
+]);
+
+const techNotes = notes.filter((note) => note.data.kind === "tech");
+const studyNotes = notes.filter((note) => note.data.kind === "study");
+---
+
+<BaseLayout title="个人网页 · 主线" active="home" path="INDEX / 2026">
+  <div class="library-content">
+    <header class="index-head">
+      <p class="index-eyebrow">CURRENT THREADS · 2026.11</p>
+      <h1 class="index-title">主线</h1>
+    </header>
+
+    <ThreadTree threads={threads} />
+    <ActivityFeed items={activity} />
+
+    <section class="content-section" id="music">
+      <div class="content-head">
+        <div class="content-head-main">
+          <span class="section-kicker">MUSIC / {String(favorites.length).padStart(2, "0")}</span>
+          <h2 class="content-title">我的音乐库</h2>
+        </div>
+        <a class="content-link" href={withBase("/music/")}>全部音乐 →</a>
+      </div>
+      <MusicPlayer tracks={favorites} />
+    </section>
+
+    <section class="content-section" id="excerpts" data-search-section>
+      <div class="content-head">
+        <div class="content-head-main">
+          <span class="section-kicker">EXCERPTS / {String(excerpts.length).padStart(2, "0")}</span>
+          <h2 class="content-title">随性摘抄</h2>
+        </div>
+        <a class="content-link" href={withBase("/excerpts/")}>全部摘抄 →</a>
+      </div>
+      <div class="excerpt-grid">
+        {excerpts.map((entry) => <ExcerptCard entry={entry} />)}
+      </div>
+    </section>
+
+    <section class="content-section" id="collections" data-search-section>
+      <div class="content-head">
+        <div class="content-head-main">
+          <span class="section-kicker">COLLECTIONS / {String(collections.length).padStart(2, "0")}</span>
+          <h2 class="content-title">收藏</h2>
+        </div>
+        <a class="content-link" href={withBase("/collections/")}>全部收藏 →</a>
+      </div>
+      <div class="collection-list">
+        {collections.map((entry) => <CollectionRow entry={entry} />)}
+      </div>
+    </section>
+
+    <section class="content-section" id="notes" data-search-section>
+      <div class="content-head">
+        <div>
+          <div class="content-head-main">
+            <span class="section-kicker">NOTES / {String(notes.length).padStart(2, "0")}</span>
+            <h2 class="content-title">笔记</h2>
+          </div>
+          <div class="filter-chips" role="group" aria-label="按类型筛选笔记">
+            <button class="filter-chip is-active" type="button" data-kind-filter="all" aria-pressed="true">全部</button>
+            <button class="filter-chip" type="button" data-kind-filter="tech" aria-pressed="false">技术</button>
+            <button class="filter-chip" type="button" data-kind-filter="study" aria-pressed="false">学习</button>
+          </div>
+        </div>
+        <a class="content-link" href={withBase("/notes/")}>全部笔记 →</a>
+      </div>
+
+      <div class="note-subhead" data-group-head="tech">
+        <h3>技术笔记</h3>
+        <span class="mono">TECH / {String(techNotes.length).padStart(2, "0")}</span>
+      </div>
+      <div class="note-list" data-note-group="tech">
+        {techNotes.map((entry) => <NoteRow entry={entry} />)}
+      </div>
+
+      <div class="note-subhead" data-group-head="study">
+        <h3>学习笔记</h3>
+        <span class="mono">STUDY / {String(studyNotes.length).padStart(2, "0")}</span>
+      </div>
+      <div class="study-grid" data-note-group="study">
+        {studyNotes.map((entry) => <StudyCard entry={entry} />)}
+      </div>
+    </section>
+
+    <footer class="library-footer">
+      <span>个人网页 · 最后更新 2026.11.15</span>
+      <span>Markdown / 本地文件</span>
+    </footer>
+  </div>
+</BaseLayout>

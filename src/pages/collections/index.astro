@@ -1,0 +1,26 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CollectionRow from "../../components/CollectionRow.astro";
+import TagFilter from "../../components/TagFilter.astro";
+import { getCollections, tagCounts } from "../../lib/content";
+
+const collections = await getCollections();
+const tags = [...tagCounts(collections).entries()];
+---
+
+<BaseLayout title="收藏 · 个人网页" active="collections" path="LIBRARY / COLLECTIONS">
+  <div class="overview-page">
+    <header class="overview-head">
+      <p class="overview-kicker">COLLECTIONS / {String(collections.length).padStart(2, "0")}</p>
+      <h1 class="overview-title">收藏</h1>
+      <p class="overview-desc">访谈、演讲和外部链接。</p>
+      <TagFilter tags={tags} total={collections.length} />
+    </header>
+
+    <div class="overview-list" data-search-section>
+      <div class="collection-list">
+        {collections.map((entry) => <CollectionRow entry={entry} />)}
+      </div>
+    </div>
+  </div>
+</BaseLayout>

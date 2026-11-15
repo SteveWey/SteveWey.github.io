@@ -1,0 +1,53 @@
+---
+import type { NoteEntry } from "../lib/content";
+import { formatDate } from "../lib/content";
+import { withBase } from "../lib/url";
+
+interface Props {
+  threads: Array<{
+    id: string;
+    title: string;
+    description?: string;
+    noteEntries: NoteEntry[];
+  }>;
+}
+const { threads } = Astro.props;
+---
+
+<section class="threads" id="threads" aria-label="目前的主线">
+  <div class="thread-map">
+    <div class="thread-root">
+      <div class="thread-root-inner">
+        <span class="root-dot" aria-hidden="true"></span>
+        <span>
+          <span class="root-label">现在</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="thread-branches">
+      {threads.map((thread, index) => (
+        <section class="thread-branch">
+          <div class="thread-branch-head">
+            <span class="branch-index">{String(index + 1).padStart(2, "0")}</span>
+            <h2 class="branch-title">{thread.title}</h2>
+            <span class="branch-count">{String(thread.noteEntries.length).padStart(2, "0")} NOTES</span>
+          </div>
+          {thread.description && <p class="branch-desc">{thread.description}</p>}
+          <div class="branch-leaves">
+            {thread.noteEntries.length > 0 ? (
+              thread.noteEntries.map((note) => (
+                <a class="branch-leaf" href={withBase(`/notes/${note.id}/`)}>
+                  {note.data.title}
+                  <span>{formatDate(note.data.updated ?? note.data.date)}</span>
+                </a>
+              ))
+            ) : (
+              <span class="branch-empty">待添加</span>
+            )}
+          </div>
+        </section>
+      ))}
+    </div>
+  </div>
+</section>

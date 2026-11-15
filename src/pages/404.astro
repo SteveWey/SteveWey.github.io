@@ -1,0 +1,15 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { withBase } from "../lib/url";
+---
+
+<BaseLayout title="404 · 个人网页" active="404" path="NOT FOUND">
+  <div class="overview-page">
+    <header class="overview-head">
+      <p class="overview-kicker">404 / NOT FOUND</p>
+      <h1 class="overview-title">这一页不存在</h1>
+      <p class="overview-desc">可能是链接写错了，或者内容已经被移走。</p>
+      <p><a class="content-link" href={withBase("/")}>← 回到首页</a></p>
+    </header>
+  </div>
+</BaseLayout>

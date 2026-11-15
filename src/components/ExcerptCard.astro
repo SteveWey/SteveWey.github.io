@@ -1,0 +1,31 @@
+---
+import type { ExcerptEntry } from "../lib/content";
+import { formatDate } from "../lib/content";
+
+interface Props {
+  entry: ExcerptEntry;
+}
+const { entry } = Astro.props;
+const { title, text, source, tags, status, date } = entry.data;
+---
+
+<article
+  class="excerpt-card"
+  id={entry.id}
+  data-search={`${title} ${text ?? ""} ${source} ${tags.join(" ")}`}
+  data-tags={tags.join(",")}
+  data-kind="excerpt"
+>
+  <div class="excerpt-top">
+    <span class="excerpt-kind">{tags[0] || "摘抄"}</span>
+    <span class:list={["excerpt-status", { "excerpt-status--pending": status === "待校对" || status === "待补全" }]}>
+      {status}
+    </span>
+  </div>
+  <h3 class="excerpt-title">{title}</h3>
+  {text && <p class="excerpt-text">{text}</p>}
+  <div class="excerpt-foot">
+    <span class="excerpt-source">{source}</span>
+    <time class="excerpt-date" datetime={date.toISOString()}>{formatDate(date)}</time>
+  </div>
+</article>

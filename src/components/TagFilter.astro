@@ -1,0 +1,18 @@
+---
+interface Props {
+  tags: Array<[string, number]>;
+  total: number;
+}
+const { tags, total } = Astro.props;
+---
+
+<div class="tag-filter" role="group" aria-label="按标签筛选">
+  <button class="tag-filter-button is-active" type="button" data-tag-filter="all" aria-pressed="true">
+    全部 <span>{total}</span>
+  </button>
+  {tags.map(([tag, count]) => (
+    <button class="tag-filter-button" type="button" data-tag-filter={tag} aria-pressed="false">
+      {tag} <span>{count}</span>
+    </button>
+  ))}
+</div>

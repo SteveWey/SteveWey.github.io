@@ -1,0 +1,42 @@
+---
+import type { ActivityItem } from "../lib/content";
+import { formatDate } from "../lib/content";
+import { withBase } from "../lib/url";
+
+interface Props {
+  items: ActivityItem[];
+}
+const { items } = Astro.props;
+---
+
+<section class="content-section" id="other" data-search-section>
+  <div class="content-head">
+    <div class="content-head-main">
+      <span class="section-kicker">ELSEWHERE / {String(items.length).padStart(2, "0")}</span>
+      <h2 class="content-title">主线之外</h2>
+    </div>
+    <span class="content-note">按更新时间倒序</span>
+  </div>
+
+  <div class="activity-list">
+    {items.map((item) => (
+      <a
+        class="activity-row"
+        href={withBase(item.href)}
+        data-search={`${item.title} ${item.description ?? ""} ${item.tags.join(" ")}`}
+      >
+        <time class="activity-date" datetime={item.date.toISOString()}>
+          {formatDate(item.date)}
+        </time>
+        <span class:list={["activity-type", { "activity-type--music": item.type === "音乐" }]}>
+          {item.type}
+        </span>
+        <span class="activity-main">
+          <span class="activity-title">{item.title}</span>
+          {item.description && <span class="activity-desc">{item.description}</span>}
+        </span>
+        <span class="activity-arrow" aria-hidden="true">↗</span>
+      </a>
+    ))}
+  </div>
+</section>

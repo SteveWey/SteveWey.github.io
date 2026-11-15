@@ -29,3 +29,6 @@ docs/
 
 # Local visual review output
 screenshots/
+
+.flac
+music/

@@ -1,0 +1,89 @@
+---
+import Sidebar from "../components/Sidebar.astro";
+import Topbar from "../components/Topbar.astro";
+import { getNotes, getExcerpts, getCollections, getMusic } from "../lib/content";
+import { site } from "../data/site";
+import { threads } from "../data/threads";
+import { base, withBase } from "../lib/url";
+import "../styles/tokens.css";
+import "../styles/app.css";
+import "../styles/library.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+  active?: string;
+  path?: string;
+  backHref?: string;
+  backLabel?: string;
+}
+
+const {
+  title = site.title,
+  description = site.description,
+  active = "home",
+  path = "INDEX / 2026",
+  backHref,
+  backLabel,
+} = Astro.props;
+
+const [notes, excerpts, collections, music] = await Promise.all([
+  getNotes(),
+  getExcerpts(),
+  getCollections(),
+  getMusic(),
+]);
+
+const counts = {
+  mainlines: threads.length,
+  activity: Math.min(6, notes.length + excerpts.length + collections.length + music.length),
+  notes: notes.length,
+  excerpts: excerpts.length,
+  collections: collections.length,
+  music: music.length,
+};
+
+const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
+---
+
+<!doctype html>
+<html lang="zh-CN" data-theme="clay">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#faf7f0" />
+    <link rel="icon" href={withBase("/favicon.svg")} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <script is:inline>
+      (() => {
+        document.documentElement.classList.add("js");
+        try {
+          const saved = localStorage.getItem("personal-site-theme");
+          if (saved) document.documentElement.dataset.theme = saved;
+        } catch (_) {}
+      })();
+    </script>
+  </head>
+  <body data-page={active} data-base={base}>
+    <a class="skip-link" href="#main">跳到主要内容</a>
+    <Sidebar active={active} counts={counts} />
+    <div class="sidebar-backdrop" data-sidebar-backdrop></div>
+
+    <div class="library-main">
+      <Topbar path={path} backHref={backHref} backLabel={backLabel} />
+      <main id="main">
+        <slot />
+      </main>
+    </div>
+
+    <script>
+      import "../scripts/site";
+    </script>
+  </body>
+</html>

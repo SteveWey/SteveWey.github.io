@@ -1,0 +1,141 @@
+---
+import { render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getNotes, formatDate, readingTime } from "../../lib/content";
+import { withBase } from "../../lib/url";
+import "katex/dist/katex.min.css";
+
+export async function getStaticPaths() {
+  const notes = await getNotes();
+  return notes.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const notes = await getNotes();
+const index = notes.findIndex((note) => note.id === entry.id);
+const prev = index > 0 ? notes[index - 1] : undefined;
+const next = index >= 0 && index < notes.length - 1 ? notes[index + 1] : undefined;
+
+const { Content, headings } = await render(entry);
+const toc = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
+const words = entry.body ?? "";
+
+const related = notes
+  .filter((note) => note.id !== entry.id)
+  .filter(
+    (note) =>
+      note.data.kind === entry.data.kind ||
+      note.data.tags.some((tag) => entry.data.tags.includes(tag))
+  )
+  .slice(0, 2);
+---
+
+<BaseLayout
+  title={`${entry.data.title} · 个人网页`}
+  description={entry.data.description}
+  active="note"
+  path={`NOTES / ${entry.data.kind === "tech" ? "TECH" : "STUDY"}`}
+  backHref="/notes/"
+  backLabel="返回笔记"
+>
+  <div class="reading-progress" aria-hidden="true"></div>
+  <article class="note-page" data-note-article>
+    <header class="note-head">
+      <nav class="note-breadcrumb" aria-label="面包屑">
+        <a href={withBase("/")}>首页</a>
+        <span class="sep">/</span>
+        <a href={withBase("/notes/")}>笔记</a>
+        <span class="sep">/</span>
+        <span>{entry.data.kind === "tech" ? "技术" : "学习"}</span>
+      </nav>
+
+      <h1 class="note-page-title">{entry.data.title}</h1>
+      <p class="note-summary">{entry.data.description}</p>
+
+      <div class="note-meta">
+        <span>{entry.data.kind === "tech" ? "技术笔记" : "学习笔记"}</span>
+        <span class="dot" aria-hidden="true"></span>
+        <time datetime={entry.data.date.toISOString()}>{formatDate(entry.data.date, "full")}</time>
+        <span class="dot" aria-hidden="true"></span>
+        <span>约 {readingTime(words)} 分钟</span>
+        <span class="dot" aria-hidden="true"></span>
+        <span class:list={{ "note-done": entry.data.status === "已整理" }}>{entry.data.status}</span>
+      </div>
+
+      <div class="note-tag-row">
+        {entry.data.tags.map((tag) => (
+          <a href={withBase(`/notes/?tag=${encodeURIComponent(tag)}`)}>#{tag}</a>
+        ))}
+      </div>
+    </header>
+
+    <div class="note-layout">
+      <div class="note-body">
+        <div class="prose">
+          <Content />
+        </div>
+
+        {related.length > 0 && (
+          <div class="related-notes">
+            <p class="related-label">RELATED NOTES</p>
+            <div class="related-list">
+              {related.map((note) => (
+                <a class="related-item" href={withBase(`/notes/${note.id}/`)}>
+                  <small>{note.data.kind === "tech" ? "技术笔记" : "学习笔记"} · {formatDate(note.data.date)}</small>
+                  <strong>{note.data.title}</strong>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <a class="note-back" href={withBase("/notes/")}>← 回到笔记列表</a>
+      </div>
+
+      <aside class="note-aside" aria-label="笔记信息与目录">
+        <div class="note-info">
+          <p class="note-info-label">文件信息</p>
+          <dl>
+            <div><dt>路径</dt><dd><code>notes/{entry.id}/index.md</code></dd></div>
+            <div><dt>类型</dt><dd>{entry.data.kind === "tech" ? "技术笔记" : "学习笔记"}</dd></div>
+            <div><dt>更新</dt><dd>{formatDate(entry.data.updated ?? entry.data.date, "full")}</dd></div>
+            <div><dt>状态</dt><dd>{entry.data.status}</dd></div>
+          </dl>
+        </div>
+
+        {toc.length > 0 && (
+          <nav class="note-toc" aria-label="本文目录">
+            <p class="note-toc-title">ON THIS PAGE</p>
+            <div class="note-toc-list">
+              {toc.map((heading) => (
+                <a class:list={[{ "toc-h3": heading.depth === 3 }]} href={`#${heading.slug}`}>
+                  {heading.text}
+                </a>
+              ))}
+            </div>
+          </nav>
+        )}
+      </aside>
+    </div>
+
+    {(prev || next) && (
+      <nav class="post-nav" aria-label="相邻笔记">
+        {prev ? (
+          <a href={withBase(`/notes/${prev.id}/`)}>
+            <small>← PREVIOUS</small>
+            <strong>{prev.data.title}</strong>
+          </a>
+        ) : <span />}
+        {next ? (
+          <a href={withBase(`/notes/${next.id}/`)}>
+            <small>NEXT →</small>
+            <strong>{next.data.title}</strong>
+          </a>
+        ) : <span />}
+      </nav>
+    )}
+  </article>
+</BaseLayout>

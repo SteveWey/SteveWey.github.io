@@ -1,0 +1,123 @@
+---
+import { homeNav, overviewNav, site } from "../data/site";
+import { withBase } from "../lib/url";
+
+interface Props {
+  active?: string;
+  counts: {
+    mainlines: number;
+    activity: number;
+    notes: number;
+    excerpts: number;
+    collections: number;
+    music: number;
+  };
+}
+
+const { active = "home", counts } = Astro.props;
+
+const isOverviewActive = (href: string) => {
+  if (href === "/notes/") return active === "notes" || active === "note";
+  if (href === "/excerpts/") return active === "excerpts";
+  if (href === "/collections/") return active === "collections";
+  if (href === "/music/") return active === "music";
+  return false;
+};
+
+const overviewCount = (href: string) => {
+  if (href === "/notes/") return counts.notes;
+  if (href === "/excerpts/") return counts.excerpts;
+  if (href === "/collections/") return counts.collections;
+  if (href === "/music/") return counts.music;
+  return 0;
+};
+
+const homeCount = (label: string) => {
+  switch (label) {
+    case "主线":
+      return counts.mainlines;
+    case "主线之外":
+      return counts.activity;
+    case "音乐收藏":
+      return counts.music;
+    case "随性摘抄":
+      return counts.excerpts;
+    case "收藏":
+      return counts.collections;
+    case "笔记":
+      return counts.notes;
+    default:
+      return 0;
+  }
+};
+---
+
+<aside class="library-sidebar" id="library-sidebar" aria-label="网站导航">
+  <div class="sidebar-top">
+    <a class="library-brand" href={withBase("/")} aria-label={`${site.title}首页`}>
+      <span class="library-mark" aria-hidden="true">网</span>
+      <span class="library-brand-text">
+        <strong>{site.title}</strong>
+        <small>{site.subtitle}</small>
+      </span>
+    </a>
+    <button class="icon-button sidebar-close" type="button" aria-label="关闭导航" data-sidebar-close>
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+
+  <label class="library-search" for="library-search">
+    <span class="search-icon" aria-hidden="true">⌕</span>
+    <input
+      id="library-search"
+      type="search"
+      placeholder="搜索…"
+      autocomplete="off"
+      spellcheck="false"
+    />
+    <kbd>⌘K</kbd>
+  </label>
+  <p class="search-status" id="search-status" hidden></p>
+
+  <nav class="library-nav" aria-label="主页内导航">
+    {homeNav.map((item) => (
+      <a
+        href={withBase(item.href)}
+        class:list={{ "is-active": active === "home" && item.label === "主线" }}
+        aria-current={active === "home" && item.label === "主线" ? "page" : undefined}
+      >
+        <span>{item.label}</span>
+        <small>{String(homeCount(item.label)).padStart(2, "0")}</small>
+      </a>
+    ))}
+  </nav>
+
+  <div class="sidebar-group">
+    <p class="sidebar-label">总览</p>
+    {overviewNav.map((item) => (
+      <a
+        class:list={["sidebar-sub", { "is-active": isOverviewActive(item.href) }]}
+        href={withBase(item.href)}
+        aria-current={isOverviewActive(item.href) ? "page" : undefined}
+      >
+        {item.label}
+        <span>{String(overviewCount(item.href)).padStart(2, "0")}</span>
+      </a>
+    ))}
+  </div>
+
+  <div class="sidebar-theme">
+    <p class="sidebar-label">配色</p>
+    <div class="theme-dots" role="group" aria-label="配色预设">
+      <button class="theme-dot" type="button" data-theme-choice="clay" aria-label="赤陶" aria-pressed="true"></button>
+      <button class="theme-dot" type="button" data-theme-choice="pine" aria-label="松墨" aria-pressed="false"></button>
+      <button class="theme-dot" type="button" data-theme-choice="indigo" aria-label="靛青" aria-pressed="false"></button>
+      <button class="theme-dot" type="button" data-theme-choice="ochre" aria-label="赭石" aria-pressed="false"></button>
+      <button class="theme-dot" type="button" data-theme-choice="rosewood" aria-label="胭脂" aria-pressed="false"></button>
+    </div>
+  </div>
+
+  <div class="sidebar-foot">
+    <small>最后更新 {site.lastUpdated}</small>
+  </div>
+</aside>

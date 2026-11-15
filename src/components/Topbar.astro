@@ -1,0 +1,39 @@
+---
+import { site } from "../data/site";
+import { withBase } from "../lib/url";
+
+interface Props {
+  path?: string;
+  backHref?: string;
+  backLabel?: string;
+}
+
+const { path = "INDEX / 2026", backHref, backLabel = "返回首页" } = Astro.props;
+---
+
+<header class="library-topbar">
+  <div class="topbar-left">
+    <button
+      class="icon-button menu-button"
+      type="button"
+      aria-label="打开导航"
+      aria-controls="library-sidebar"
+      aria-expanded="false"
+      data-sidebar-toggle
+    >
+      <span aria-hidden="true">☰</span>
+    </button>
+    <span class="topbar-brand">{site.title}</span>
+    <span class="mono">{path}</span>
+  </div>
+  <div class="topbar-right">
+    <button class="topbar-search" type="button" data-open-search>
+      搜索 <kbd>⌘K</kbd>
+    </button>
+    {backHref ? (
+      <a class="topbar-link" href={withBase(backHref)}>← {backLabel}</a>
+    ) : (
+      <a class="topbar-link" href={site.github} target="_blank" rel="noreferrer">GitHub ↗</a>
+    )}
+  </div>
+</header>

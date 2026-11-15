@@ -1,0 +1,27 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import NoteRow from "../../components/NoteRow.astro";
+import TagFilter from "../../components/TagFilter.astro";
+import { getNotes, tagCounts } from "../../lib/content";
+
+const notes = await getNotes();
+const tags = [...tagCounts(notes).entries()];
+---
+
+<BaseLayout title="笔记 · 个人网页" active="notes" path="LIBRARY / NOTES">
+  <div class="overview-page">
+    <header class="overview-head">
+      <p class="overview-kicker">NOTES / {String(notes.length).padStart(2, "0")}</p>
+      <h1 class="overview-title">笔记</h1>
+      <p class="overview-desc">技术笔记和学习笔记。按更新时间排序。</p>
+      <TagFilter tags={tags} total={notes.length} />
+    </header>
+
+    <div class="overview-list" data-search-section>
+      <div class="note-list">
+        {notes.map((entry) => <NoteRow entry={entry} />)}
+      </div>
+      <p class="search-empty" hidden>没有匹配的笔记。</p>
+    </div>
+  </div>
+</BaseLayout>
