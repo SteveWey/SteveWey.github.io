@@ -56,7 +56,7 @@ const genres = [...new Set(tracks.map((track) => track.data.genre).filter(Boolea
       </div>
 
       <div class="music-archive-list">
-        {tracks.map((track, index) => {
+        {tracks.map((track) => {
           const cover = track.data.cover ? withBase(track.data.cover) : "";
           return (
             <div
@@ -79,7 +79,6 @@ const genres = [...new Set(tracks.map((track) => track.data.genre).filter(Boolea
                 data-lyrics={track.data.lyrics ? withBase(track.data.lyrics) : ""}
                 aria-label={`播放 ${track.data.title}`}
               >
-                <span class="archive-index">{String(index + 1).padStart(2, "0")}</span>
                 <span class="archive-main">
                   <strong>{track.data.title}</strong>
                   <small>{track.data.artist}</small>

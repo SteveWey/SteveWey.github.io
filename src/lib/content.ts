@@ -37,7 +37,11 @@ export async function getCollections(): Promise<CollectionEntryType[]> {
 
 export async function getMusic(): Promise<MusicEntry[]> {
   const music = await getCollection("music");
-  return music.sort((a, b) => a.data.order - b.data.order || byDateDesc(a, b));
+  const collator = new Intl.Collator("zh-Hans-CN", {
+    numeric: true,
+    sensitivity: "base",
+  });
+  return music.sort((a, b) => collator.compare(a.data.title, b.data.title));
 }
 
 export async function getFavoriteMusic(): Promise<MusicEntry[]> {
