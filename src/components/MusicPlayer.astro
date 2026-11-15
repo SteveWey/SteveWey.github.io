@@ -29,19 +29,19 @@ const firstCover = first.data.cover ? withBase(first.data.cover) : "";
             <p class="music-eyebrow">NOW PLAYING / TRACK 01</p>
             <h3 class="music-title" id="music-title">{first.data.title}</h3>
             <p class="music-artist" id="music-artist">{first.data.artist}</p>
-            <div class="music-controls">
-              <button class="music-toggle" type="button" data-music-toggle aria-label="播放">
-                <span class="music-icon" aria-hidden="true">▶</span>
-              </button>
-              <div class="music-bar" aria-hidden="true">
-                <span class="music-fill" id="music-fill"></span>
-              </div>
-              <span class="music-time">
-                <span id="music-current">0:00</span> / <span id="music-duration">{first.data.duration}</span>
-              </span>
-            </div>
           </div>
           <MusicLyrics src={first.data.lyrics ? withBase(first.data.lyrics) : ""} />
+          <div class="music-controls">
+            <button class="music-toggle" type="button" data-music-toggle aria-label="播放">
+              <span class="music-icon" aria-hidden="true">▶</span>
+            </button>
+            <div class="music-bar" aria-hidden="true">
+              <span class="music-fill" id="music-fill"></span>
+            </div>
+            <span class="music-time">
+              <span id="music-current">0:00</span> / <span id="music-duration">{first.data.duration}</span>
+            </span>
+          </div>
         </div>
 
         {showList && (
