@@ -9,8 +9,8 @@ export const threads: Thread[] = [
   {
     id: "godot",
     title: "Godot Engine",
-    description: "",
-    notes: [],
+    description: "节点、场景和 GDScript。",
+    notes: ["godot"],
   },
   {
     id: "programming",
