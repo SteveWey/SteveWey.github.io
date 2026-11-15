@@ -1,6 +1,7 @@
 ---
 import type { ExcerptEntry } from "../lib/content";
 import { formatDate } from "../lib/content";
+import { withBase } from "../lib/url";
 
 interface Props {
   entry: ExcerptEntry;
@@ -9,8 +10,9 @@ const { entry } = Astro.props;
 const { title, text, source, tags, status, date } = entry.data;
 ---
 
-<article
+<a
   class="excerpt-card"
+  href={withBase(`/excerpts/${entry.id}/`)}
   id={entry.id}
   data-search={`${title} ${text ?? ""} ${source} ${tags.join(" ")}`}
   data-tags={tags.join(",")}
@@ -28,4 +30,4 @@ const { title, text, source, tags, status, date } = entry.data;
     <span class="excerpt-source">{source}</span>
     <time class="excerpt-date" datetime={date.toISOString()}>{formatDate(date)}</time>
   </div>
-</article>
+</a>

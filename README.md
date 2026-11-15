@@ -11,8 +11,10 @@
 - `/notes/`：笔记总览（标签筛选）
 - `/notes/[slug]/`：笔记详情（Markdown、KaTeX、代码、图片、TOC）
 - `/excerpts/`：摘录总览（标签筛选）
+- `/excerpts/[slug]/`：摘录详情
 - `/collections/`：收藏总览（标签筛选）
-- `/music/`：音乐库（标签筛选、播放器、圆形悬浮窗）
+- `/music/`：音乐库（标签筛选、歌手/专辑/类型分类、播放器、圆形悬浮窗）
+- `/music/[slug]/`：单曲详情
 
 ## 内容结构
 
@@ -105,6 +107,8 @@ status: "已收藏"
 ---
 title: "曲名"
 artist: "作者"
+album: "专辑"
+genre: "类型"
 audio: "/audio/<slug>.mp3"
 duration: "5:03"
 tags: ["李健"]
@@ -145,3 +149,17 @@ order: 1
 
 原始 FLAC 放在 `music/`，已在 `.gitignore` 中排除。  
 网页使用转码后的 MP3，放在 `public/audio/`，会被提交到仓库。
+
+### 导入音乐
+
+1. 把你合法拥有的音频放进 `music/`，比如 `music/传奇.flac`；
+2. 用 ffmpeg 转成网页格式：
+
+```bash
+ffmpeg -i "music/传奇.flac" -vn -codec:a libmp3lame -b:a 160k "public/audio/chuanqi.mp3"
+```
+
+3. 新建 `src/content/music/chuanqi/index.md`，填写 title、artist、album、genre、audio、duration；
+4. 在音乐库页面会自动按歌手、专辑、类型分类。
+
+> 不把第三方平台的受版权保护歌曲直接抓取进仓库。请使用自己购买、下载或拥有授权的声音文件。

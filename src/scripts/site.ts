@@ -189,6 +189,47 @@ kindButtons.forEach((button) => {
   });
 });
 
+/* ---------- Music archive facets ---------- */
+const facetButtons = [...document.querySelectorAll<HTMLButtonElement>("[data-facet]")];
+const archiveRows = [...document.querySelectorAll<HTMLElement>("[data-archive-row]")];
+const archiveEmpty = document.querySelector<HTMLElement>("[data-archive-empty]");
+const activeFacets: Record<string, string> = {
+  artist: "all",
+  album: "all",
+  genre: "all",
+};
+
+function applyFacets(): void {
+  let visible = 0;
+  archiveRows.forEach((row) => {
+    const matches = Object.entries(activeFacets).every(([facet, value]) => {
+      if (value === "all") return true;
+      return (row.dataset[facet] || "") === value;
+    });
+    row.hidden = !matches;
+    if (matches) visible += 1;
+  });
+  if (archiveEmpty) archiveEmpty.hidden = visible > 0;
+}
+
+facetButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const facet = button.dataset.facet;
+    if (!facet) return;
+    activeFacets[facet] = button.dataset.facetValue || "all";
+    facetButtons
+      .filter((item) => item.dataset.facet === facet)
+      .forEach((item) => {
+        const active = item === button;
+        item.classList.toggle("is-active", active);
+        item.setAttribute("aria-pressed", String(active));
+      });
+    applyFacets();
+  });
+});
+
+if (archiveRows.length) applyFacets();
+
 const initial = new URLSearchParams(window.location.search);
 const initialQuery = initial.get("q");
 const initialTag = initial.get("tag");

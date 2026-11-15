@@ -3,9 +3,13 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import MusicPlayer from "../../components/MusicPlayer.astro";
 import TagFilter from "../../components/TagFilter.astro";
 import { getMusic, tagCounts } from "../../lib/content";
+import { withBase } from "../../lib/url";
 
 const tracks = await getMusic();
 const tags = [...tagCounts(tracks).entries()];
+const artists = [...new Set(tracks.map((track) => track.data.artist))];
+const albums = [...new Set(tracks.map((track) => track.data.album).filter(Boolean))];
+const genres = [...new Set(tracks.map((track) => track.data.genre).filter(Boolean))];
 ---
 
 <BaseLayout title="音乐库 · 个人博客" active="music" path="LIBRARY / MUSIC">
@@ -13,12 +17,70 @@ const tags = [...tagCounts(tracks).entries()];
     <header class="overview-head">
       <p class="overview-kicker">MUSIC / {String(tracks.length).padStart(2, "0")}</p>
       <h1 class="overview-title">音乐库</h1>
-      <p class="overview-desc">收藏的音乐，本地存放。</p>
+      <p class="overview-desc">收藏的音乐，本地存放。按歌手、专辑和类型整理。</p>
       <TagFilter tags={tags} total={tracks.length} />
     </header>
 
     <section id="music" class="overview-list">
       <MusicPlayer tracks={tracks} />
+    </section>
+
+    <section class="music-archive" aria-label="曲目档案">
+      <div class="content-head">
+        <div class="content-head-main">
+          <span class="section-kicker">ARCHIVE / {String(tracks.length).padStart(2, "0")}</span>
+          <h2 class="content-title">曲目档案</h2>
+        </div>
+        <a class="content-link" href={withBase("/music/")}>回到播放器 →</a>
+      </div>
+
+      <div class="music-facets">
+        <div class="facet-group">
+          <span class="facet-label">歌手</span>
+          <button class="facet-button is-active" type="button" data-facet="artist" data-facet-value="all" aria-pressed="true">全部</button>
+          {artists.map((artist) => (
+            <button class="facet-button" type="button" data-facet="artist" data-facet-value={artist} aria-pressed="false">{artist}</button>
+          ))}
+        </div>
+        <div class="facet-group">
+          <span class="facet-label">专辑</span>
+          <button class="facet-button is-active" type="button" data-facet="album" data-facet-value="all" aria-pressed="true">全部</button>
+          {albums.map((album) => (
+            <button class="facet-button" type="button" data-facet="album" data-facet-value={album} aria-pressed="false">{album}</button>
+          ))}
+        </div>
+        <div class="facet-group">
+          <span class="facet-label">类型</span>
+          <button class="facet-button is-active" type="button" data-facet="genre" data-facet-value="all" aria-pressed="true">全部</button>
+          {genres.map((genre) => (
+            <button class="facet-button" type="button" data-facet="genre" data-facet-value={genre} aria-pressed="false">{genre}</button>
+          ))}
+        </div>
+      </div>
+
+      <div class="music-archive-list">
+        {tracks.map((track, index) => (
+          <a
+            class="music-archive-row"
+            href={withBase(`/music/${track.id}/`)}
+            data-archive-row
+            data-artist={track.data.artist}
+            data-album={track.data.album}
+            data-genre={track.data.genre}
+          >
+            <span class="archive-index">{String(index + 1).padStart(2, "0")}</span>
+            <span class="archive-main">
+              <strong>{track.data.title}</strong>
+              <small>{track.data.artist}</small>
+            </span>
+            <span class="archive-album">{track.data.album || "—"}</span>
+            <span class="archive-genre">{track.data.genre || "—"}</span>
+            <span class="archive-duration">{track.data.duration}</span>
+            <span class="archive-arrow" aria-hidden="true">↗</span>
+          </a>
+        ))}
+      </div>
+      <p class="empty-state" data-archive-empty hidden>没有匹配的曲目。</p>
     </section>
   </div>
 </BaseLayout>

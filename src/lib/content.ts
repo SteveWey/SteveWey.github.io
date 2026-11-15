@@ -88,7 +88,7 @@ export async function recentActivity(limit = 6): Promise<ActivityItem[]> {
       type: "摘抄" as const,
       title: excerpt.data.title,
       description: excerpt.data.source,
-      href: `/excerpts/#${excerpt.id}`,
+      href: `/excerpts/${excerpt.id}/`,
       date: excerpt.data.updated ?? excerpt.data.date,
       tags: excerpt.data.tags,
     })),

@@ -1,0 +1,94 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import MusicPlayer from "../../components/MusicPlayer.astro";
+import { getMusic, formatDate } from "../../lib/content";
+import { withBase } from "../../lib/url";
+
+export async function getStaticPaths() {
+  const tracks = await getMusic();
+  return tracks.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const tracks = await getMusic();
+const index = tracks.findIndex((track) => track.id === entry.id);
+const prev = index > 0 ? tracks[index - 1] : undefined;
+const next = index >= 0 && index < tracks.length - 1 ? tracks[index + 1] : undefined;
+const { title, artist, album, genre, cover, duration, tags, favorite, date } = entry.data;
+const coverUrl = cover ? withBase(cover) : "";
+---
+
+<BaseLayout
+  title={`${title} · 音乐库 · 个人博客`}
+  description={`${artist} · ${album || "单曲"}`}
+  active="music"
+  path="LIBRARY / MUSIC"
+  backHref="/music/"
+  backLabel="返回音乐库"
+>
+  <article class="note-page music-detail">
+    <header class="music-detail-hero">
+      <div
+        class="music-detail-cover"
+        aria-hidden="true"
+        style={coverUrl ? `background-image: url("${coverUrl}")` : undefined}
+      ></div>
+      <div class="music-detail-info">
+        <p class="note-breadcrumb">
+          <a href={withBase("/music/")}>音乐库</a>
+          <span class="sep">/</span>
+          <span>{artist}</span>
+        </p>
+        <h1 class="note-page-title">{title}</h1>
+        <p class="music-detail-artist">{artist}</p>
+        <div class="music-detail-meta">
+          {album && <span>{album}</span>}
+          {album && genre && <span class="dot" aria-hidden="true"></span>}
+          {genre && <span>{genre}</span>}
+          <span class="dot" aria-hidden="true"></span>
+          <span>{duration}</span>
+          <span class="dot" aria-hidden="true"></span>
+          <span>{formatDate(date, "full")}</span>
+          {favorite && <><span class="dot" aria-hidden="true"></span><span>首页推荐</span></>}
+        </div>
+        <div class="music-detail-actions">
+          <button class="music-toggle music-detail-play" type="button" data-music-toggle aria-label="播放">
+            <span class="music-icon" aria-hidden="true">▶</span>
+          </button>
+          <span class="music-detail-hint">播放 / 暂停</span>
+        </div>
+        <div class="note-tag-row">
+          {tags.map((tag) => (
+            <a href={withBase(`/music/?tag=${encodeURIComponent(tag)}`)}>#{tag}</a>
+          ))}
+        </div>
+      </div>
+    </header>
+
+    <div class="music-detail-player">
+      <MusicPlayer tracks={[entry]} minimal />
+    </div>
+
+    {(prev || next) && (
+      <nav class="post-nav" aria-label="相邻曲目">
+        {prev ? (
+          <a href={withBase(`/music/${prev.id}/`)}>
+            <small>← PREVIOUS</small>
+            <strong>{prev.data.title}</strong>
+          </a>
+        ) : <span />}
+        {next ? (
+          <a href={withBase(`/music/${next.id}/`)}>
+            <small>NEXT →</small>
+            <strong>{next.data.title}</strong>
+          </a>
+        ) : <span />}
+      </nav>
+    )}
+
+    <a class="note-back" href={withBase("/music/")}>← 回到音乐库</a>
+  </article>
+</BaseLayout>

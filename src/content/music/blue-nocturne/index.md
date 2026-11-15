@@ -1,6 +1,8 @@
 ---
 title: "蓝色夜曲"
 artist: "李健"
+album: "蓝色夜曲"
+genre: "流行"
 audio: "/audio/blue-nocturne.mp3"
 cover: "/images/music/blue-nocturne.svg"
 duration: "4:32"
