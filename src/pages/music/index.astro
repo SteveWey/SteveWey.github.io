@@ -1,12 +1,10 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import MusicPlayer from "../../components/MusicPlayer.astro";
-import TagFilter from "../../components/TagFilter.astro";
-import { getMusic, tagCounts } from "../../lib/content";
+import { getMusic } from "../../lib/content";
 import { withBase } from "../../lib/url";
 
 const tracks = await getMusic();
-const tags = [...tagCounts(tracks).entries()];
 const artists = [...new Set(tracks.map((track) => track.data.artist))];
 const albums = [...new Set(tracks.map((track) => track.data.album).filter(Boolean))];
 const genres = [...new Set(tracks.map((track) => track.data.genre).filter(Boolean))];
@@ -18,20 +16,19 @@ const genres = [...new Set(tracks.map((track) => track.data.genre).filter(Boolea
       <p class="overview-kicker">MUSIC / {String(tracks.length).padStart(2, "0")}</p>
       <h1 class="overview-title">音乐库</h1>
       <p class="overview-desc">收藏的音乐，本地存放。按歌手、专辑和类型整理。</p>
-      <TagFilter tags={tags} total={tracks.length} />
     </header>
 
     <section id="music" class="overview-list">
-      <MusicPlayer tracks={tracks} />
+      <MusicPlayer tracks={tracks} showList={false} />
     </section>
 
-    <section class="music-archive" aria-label="曲目档案">
+    <section class="music-archive" aria-label="曲目">
       <div class="content-head">
         <div class="content-head-main">
-          <span class="section-kicker">ARCHIVE / {String(tracks.length).padStart(2, "0")}</span>
-          <h2 class="content-title">曲目档案</h2>
+          <span class="section-kicker">TRACKS / {String(tracks.length).padStart(2, "0")}</span>
+          <h2 class="content-title">曲目</h2>
         </div>
-        <a class="content-link" href={withBase("/music/")}>回到播放器 →</a>
+        <span class="content-note">点击播放，标题进入详情</span>
       </div>
 
       <div class="music-facets">
@@ -59,26 +56,42 @@ const genres = [...new Set(tracks.map((track) => track.data.genre).filter(Boolea
       </div>
 
       <div class="music-archive-list">
-        {tracks.map((track, index) => (
-          <a
-            class="music-archive-row"
-            href={withBase(`/music/${track.id}/`)}
-            data-archive-row
-            data-artist={track.data.artist}
-            data-album={track.data.album}
-            data-genre={track.data.genre}
-          >
-            <span class="archive-index">{String(index + 1).padStart(2, "0")}</span>
-            <span class="archive-main">
-              <strong>{track.data.title}</strong>
-              <small>{track.data.artist}</small>
-            </span>
-            <span class="archive-album">{track.data.album || "—"}</span>
-            <span class="archive-genre">{track.data.genre || "—"}</span>
-            <span class="archive-duration">{track.data.duration}</span>
-            <span class="archive-arrow" aria-hidden="true">↗</span>
-          </a>
-        ))}
+        {tracks.map((track, index) => {
+          const cover = track.data.cover ? withBase(track.data.cover) : "";
+          return (
+            <div
+              class="music-archive-row"
+              data-archive-row
+              data-artist={track.data.artist}
+              data-album={track.data.album}
+              data-genre={track.data.genre}
+              data-search={`${track.data.title} ${track.data.artist} ${track.data.album} ${track.data.genre}`}
+            >
+              <button
+                class="archive-play"
+                type="button"
+                data-track
+                data-src={withBase(track.data.audio)}
+                data-title={track.data.title}
+                data-artist={track.data.artist}
+                data-duration={track.data.duration}
+                data-cover={cover}
+                aria-label={`播放 ${track.data.title}`}
+              >
+                <span class="music-icon" aria-hidden="true">▶</span>
+              </button>
+              <span class="archive-index">{String(index + 1).padStart(2, "0")}</span>
+              <a class="archive-main" href={withBase(`/music/${track.id}/`)}>
+                <strong>{track.data.title}</strong>
+                <small>{track.data.artist}</small>
+              </a>
+              <span class="archive-album">{track.data.album || "—"}</span>
+              <span class="archive-genre">{track.data.genre || "—"}</span>
+              <span class="archive-duration">{track.data.duration}</span>
+              <a class="archive-detail" href={withBase(`/music/${track.id}/`)} aria-label={`查看 ${track.data.title} 详情`}>↗</a>
+            </div>
+          );
+        })}
       </div>
       <p class="empty-state" data-archive-empty hidden>没有匹配的曲目。</p>
     </section>

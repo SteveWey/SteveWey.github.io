@@ -5,8 +5,9 @@ import { withBase } from "../lib/url";
 interface Props {
   tracks: MusicEntry[];
   minimal?: boolean;
+  showList?: boolean;
 }
-const { tracks, minimal = false } = Astro.props;
+const { tracks, minimal = false, showList = true } = Astro.props;
 const first = tracks[0];
 const firstCover = first.data.cover ? withBase(first.data.cover) : "";
 ---
@@ -41,34 +42,36 @@ const firstCover = first.data.cover ? withBase(first.data.cover) : "";
           </div>
         </div>
 
-        <div class="track-list" aria-label="音乐列表">
-          {tracks.map((track, index) => {
-            const cover = track.data.cover ? withBase(track.data.cover) : "";
-            return (
-              <button
-                class:list={["track-row", { "is-active": index === 0 }]}
-                type="button"
-                data-track
-                data-src={withBase(track.data.audio)}
-                data-title={track.data.title}
-                data-artist={track.data.artist}
-                data-duration={track.data.duration}
-                data-cover={cover}
-                data-search={`${track.data.title} ${track.data.artist} ${track.data.tags.join(" ")}`}
-                data-tags={track.data.tags.join(",")}
-                data-kind="music"
-              >
-                <span class="track-index">{String(index + 1).padStart(2, "0")}</span>
-                <span class="track-main">
-                  <strong>{track.data.title}</strong>
-                  <small>{track.data.artist}</small>
-                </span>
-                <span class="track-duration">{track.data.duration}</span>
-                <span class="track-state" aria-hidden="true">▶</span>
-              </button>
-            );
-          })}
-        </div>
+        {showList && (
+          <div class="track-list" aria-label="音乐列表">
+            {tracks.map((track, index) => {
+              const cover = track.data.cover ? withBase(track.data.cover) : "";
+              return (
+                <button
+                  class:list={["track-row", { "is-active": index === 0 }]}
+                  type="button"
+                  data-track
+                  data-src={withBase(track.data.audio)}
+                  data-title={track.data.title}
+                  data-artist={track.data.artist}
+                  data-duration={track.data.duration}
+                  data-cover={cover}
+                  data-search={`${track.data.title} ${track.data.artist} ${track.data.tags.join(" ")}`}
+                  data-tags={track.data.tags.join(",")}
+                  data-kind="music"
+                >
+                  <span class="track-index">{String(index + 1).padStart(2, "0")}</span>
+                  <span class="track-main">
+                    <strong>{track.data.title}</strong>
+                    <small>{track.data.artist}</small>
+                  </span>
+                  <span class="track-duration">{track.data.duration}</span>
+                  <span class="track-state" aria-hidden="true">▶</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
       </>
     )}
 

@@ -2787,15 +2787,17 @@ body.sidebar-open .palette-fab {
 
 /* ---------- Music archive ---------- */
 .music-archive {
-  margin-top: 44px;
-  padding-top: 22px;
-  border-top: 1px solid var(--color-line);
+  margin-top: 20px;
+  padding-top: 0;
+  border-top: 0;
 }
 
 .music-facets {
   display: grid;
   gap: 8px;
-  margin: 16px 0 18px;
+  margin: 0 0 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-line);
 }
 
 .facet-group {
@@ -2845,10 +2847,10 @@ body.sidebar-open .palette-fab {
 
 .music-archive-row {
   display: grid;
-  grid-template-columns: 28px minmax(0, 1fr) 150px 86px 48px 18px;
+  grid-template-columns: 28px 24px minmax(0, 1fr) 150px 86px 48px 18px;
   align-items: center;
-  gap: 12px;
-  padding: 12px 8px;
+  gap: 10px;
+  padding: 11px 8px;
   margin-inline: -8px;
   border-bottom: 1px solid var(--color-line);
   border-radius: var(--radius-sm);
@@ -2863,6 +2865,28 @@ body.sidebar-open .palette-fab {
   display: none;
 }
 
+.archive-play {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--color-line-strong);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-text-soft);
+  font-size: 0.52rem;
+  transition: color var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out);
+}
+
+.archive-play:hover,
+.archive-play.is-active {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-surface);
+}
+
 .archive-index {
   color: var(--color-faint);
   font-family: var(--font-mono);
@@ -2874,19 +2898,26 @@ body.sidebar-open .palette-fab {
   flex-direction: column;
   min-width: 0;
   line-height: 1.45;
+  color: inherit;
+  text-decoration: none;
 }
 
 .archive-main strong {
   overflow: hidden;
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   font-weight: 500;
   text-overflow: ellipsis;
   white-space: nowrap;
+  transition: color var(--duration-fast) var(--ease-out);
 }
 
 .archive-main small {
   color: var(--color-faint);
   font-size: 0.62rem;
+}
+
+.music-archive-row:hover .archive-main strong {
+  color: var(--color-accent-ink);
 }
 
 .archive-album,
@@ -2904,19 +2935,20 @@ body.sidebar-open .palette-fab {
   font-size: 0.5rem;
 }
 
-.archive-arrow {
+.archive-detail {
   color: var(--color-faint);
   font-size: 0.7rem;
   text-align: right;
+  text-decoration: none;
 }
 
-.music-archive-row:hover .archive-arrow {
+.music-archive-row:hover .archive-detail {
   color: var(--color-accent-ink);
 }
 
 @media (max-width: 760px) {
   .music-archive-row {
-    grid-template-columns: 24px minmax(0, 1fr) 44px 14px;
+    grid-template-columns: 28px 22px minmax(0, 1fr) 44px 14px;
     gap: 8px;
     padding-inline: 6px;
     margin-inline: -6px;
