@@ -2,6 +2,10 @@
 
 一个自用的个人网站，使用 Astro 构建，部署到 GitHub Pages。
 
+- 仓库：<https://github.com/SteveWey/SteveWey.github.io>
+- 线上地址：<https://SteveWey.github.io/>
+- 本地开发：<http://127.0.0.1:4321/>
+
 ## 本地开发
 
 ```bash
