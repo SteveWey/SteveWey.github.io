@@ -29,6 +29,7 @@ function parseLrc(source: string): LyricLine[] {
     if (tags.length === 0) return;
     const text = raw.replace(/\[[^\]]*\]/g, "").trim();
     if (!text) return;
+    if (/^(作词|作曲|编曲|制作人|出品|发行|混音|母带|吉他|贝斯|鼓|键盘|和声|录音|监制|词|曲)\s*[:：]/.test(text)) return;
     tags.forEach((tag) => {
       const minutes = Number(tag[1]);
       const seconds = Number(tag[2]);

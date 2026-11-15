@@ -149,7 +149,7 @@ order: 1
 ## 音频
 
 原始 FLAC 放在 `music/`，已在 `.gitignore` 中排除。  
-网页使用转码后的 MP3，放在 `public/audio/`，会被提交到仓库。
+网页使用 320 kbps MP3，放在 `public/audio/`，会被提交到仓库。
 
 ### 导入音乐
 
@@ -157,7 +157,7 @@ order: 1
 2. 用 ffmpeg 转成网页格式：
 
 ```bash
-ffmpeg -i "music/传奇.flac" -vn -codec:a libmp3lame -b:a 160k "public/audio/chuanqi.mp3"
+ffmpeg -i "music/传奇.flac" -vn -codec:a libmp3lame -b:a 320k "public/audio/chuanqi.mp3"
 ```
 
 3. 新建 `src/content/music/chuanqi/index.md`，填写 title、artist、album、genre、audio、duration；
