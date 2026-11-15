@@ -1958,7 +1958,6 @@ body.menu-open .palette-fab {
 .prose td {
   padding: 10px 12px;
   border-bottom: 1px solid var(--color-line);
-  text-align: left;
   vertical-align: top;
 }
 
@@ -1970,7 +1969,6 @@ body.menu-open .palette-fab {
 
 .prose td:last-child,
 .prose th:last-child {
-  text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
