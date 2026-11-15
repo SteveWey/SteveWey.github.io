@@ -74,6 +74,7 @@ const music = defineCollection({
     album: z.string().default(""),
     genre: z.string().default(""),
     audio: z.string(),
+    lyrics: z.string().optional(),
     cover: z.string().optional(),
     duration: z.string(),
     tags: z.array(z.string()).default([]),

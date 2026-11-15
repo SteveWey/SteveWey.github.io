@@ -110,6 +110,7 @@ artist: "作者"
 album: "专辑"
 genre: "类型"
 audio: "/audio/<slug>.mp3"
+lyrics: "/lyrics/<slug>.lrc"
 duration: "5:03"
 tags: ["李健"]
 favorite: true
@@ -163,3 +164,19 @@ ffmpeg -i "music/传奇.flac" -vn -codec:a libmp3lame -b:a 160k "public/audio/ch
 4. 在音乐库页面会自动按歌手、专辑、类型分类。
 
 > 不把第三方平台的受版权保护歌曲直接抓取进仓库。请使用自己购买、下载或拥有授权的声音文件。
+
+### 歌词
+
+歌词文件放到：
+
+```text
+public/lyrics/<slug>.lrc
+```
+
+然后在单曲 frontmatter 里加：
+
+```yaml
+lyrics: "/lyrics/<slug>.lrc"
+```
+
+播放器会解析 `[mm:ss.xx]` 时间轴，显示三行：上一句、当前句、下一句，首尾两行做渐变处理。没有歌词文件时不显示歌词区域。

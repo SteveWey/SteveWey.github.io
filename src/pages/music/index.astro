@@ -28,7 +28,7 @@ const genres = [...new Set(tracks.map((track) => track.data.genre).filter(Boolea
           <span class="section-kicker">TRACKS / {String(tracks.length).padStart(2, "0")}</span>
           <h2 class="content-title">曲目</h2>
         </div>
-        <span class="content-note">点击播放，标题进入详情</span>
+        <span class="content-note">点击曲目播放，↗ 查看详情</span>
       </div>
 
       <div class="music-facets">
@@ -76,18 +76,18 @@ const genres = [...new Set(tracks.map((track) => track.data.genre).filter(Boolea
                 data-artist={track.data.artist}
                 data-duration={track.data.duration}
                 data-cover={cover}
+                data-lyrics={track.data.lyrics ? withBase(track.data.lyrics) : ""}
                 aria-label={`播放 ${track.data.title}`}
               >
-                <span class="music-icon" aria-hidden="true">▶</span>
+                <span class="archive-index">{String(index + 1).padStart(2, "0")}</span>
+                <span class="archive-main">
+                  <strong>{track.data.title}</strong>
+                  <small>{track.data.artist}</small>
+                </span>
+                <span class="archive-album">{track.data.album || "—"}</span>
+                <span class="archive-genre">{track.data.genre || "—"}</span>
+                <span class="archive-duration">{track.data.duration}</span>
               </button>
-              <span class="archive-index">{String(index + 1).padStart(2, "0")}</span>
-              <a class="archive-main" href={withBase(`/music/${track.id}/`)}>
-                <strong>{track.data.title}</strong>
-                <small>{track.data.artist}</small>
-              </a>
-              <span class="archive-album">{track.data.album || "—"}</span>
-              <span class="archive-genre">{track.data.genre || "—"}</span>
-              <span class="archive-duration">{track.data.duration}</span>
               <a class="archive-detail" href={withBase(`/music/${track.id}/`)} aria-label={`查看 ${track.data.title} 详情`}>↗</a>
             </div>
           );

@@ -9,6 +9,78 @@ const miniPlayer = document.querySelector<HTMLButtonElement>("#mini-player");
 const musicArt = document.querySelector<HTMLElement>(".music-art");
 const miniCover = document.querySelector<HTMLElement>(".mini-player-cover");
 const trackRows = [...document.querySelectorAll<HTMLButtonElement>("[data-track]")];
+const lyricsBlock = document.querySelector<HTMLElement>("[data-lyrics]");
+const lyricPrev = document.querySelector<HTMLElement>("[data-lyric-prev]");
+const lyricCurrent = document.querySelector<HTMLElement>("[data-lyric-current]");
+const lyricNext = document.querySelector<HTMLElement>("[data-lyric-next]");
+
+type LyricLine = { time: number; text: string };
+let lyricLines: LyricLine[] = [];
+let lyricRequest = 0;
+
+function parseLrc(source: string): LyricLine[] {
+  const lines: LyricLine[] = [];
+  let offset = 0;
+  const offsetMatch = source.match(/^\[offset:([+-]?\d+)\]/m);
+  if (offsetMatch) offset = Number(offsetMatch[1]) / 1000;
+
+  source.split(/\r?\n/).forEach((raw) => {
+    const tags = [...raw.matchAll(/\[(\d{1,3}):(\d{2})(?:[.:](\d{1,3}))?\]/g)];
+    if (tags.length === 0) return;
+    const text = raw.replace(/\[[^\]]*\]/g, "").trim();
+    if (!text) return;
+    tags.forEach((tag) => {
+      const minutes = Number(tag[1]);
+      const seconds = Number(tag[2]);
+      const fraction = Number((tag[3] || "0").padEnd(3, "0").slice(0, 3));
+      const time = minutes * 60 + seconds + fraction / 1000 + offset;
+      lines.push({ time, text });
+    });
+  });
+
+  return lines.sort((a, b) => a.time - b.time);
+}
+
+function renderLyrics(current: number): void {
+  if (!lyricsBlock || lyricLines.length === 0) return;
+
+  let index = -1;
+  for (let i = 0; i < lyricLines.length; i += 1) {
+    if (lyricLines[i].time <= current + 0.25) index = i;
+    else break;
+  }
+
+  if (lyricPrev) lyricPrev.textContent = index > 0 ? lyricLines[index - 1].text : "";
+  if (lyricCurrent) lyricCurrent.textContent = index >= 0 ? lyricLines[index].text : "·";
+  if (lyricNext) {
+    lyricNext.textContent =
+      index < 0
+        ? lyricLines[0].text
+        : index < lyricLines.length - 1
+          ? lyricLines[index + 1].text
+          : "";
+  }
+}
+
+async function loadLyrics(src: string): Promise<void> {
+  const request = ++lyricRequest;
+  lyricLines = [];
+  if (lyricsBlock) lyricsBlock.hidden = true;
+
+  if (!src) return;
+
+  try {
+    const response = await fetch(src);
+    if (!response.ok) return;
+    const data = parseLrc(await response.text());
+    if (request !== lyricRequest || data.length === 0) return;
+    lyricLines = data;
+    if (lyricsBlock) lyricsBlock.hidden = false;
+    if (audio) renderLyrics(audio.currentTime || 0);
+  } catch {
+    // 没有歌词或歌词文件不可读时保持隐藏。
+  }
+}
 
 function formatTime(seconds: number): string {
   if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
@@ -42,6 +114,7 @@ function updateProgress(): void {
   }
   if (musicCurrent) musicCurrent.textContent = formatTime(current);
   if (musicDuration && duration) musicDuration.textContent = formatTime(duration);
+  renderLyrics(current);
 }
 
 if (audio) {
@@ -87,6 +160,7 @@ if (audio) {
         miniCover.style.backgroundImage = `url("${cover}")`;
       }
       trackRows.forEach((item) => item.classList.toggle("is-active", item === row));
+      await loadLyrics(row.dataset.lyrics || "");
       try {
         await audio.play();
         showMiniPlayer();
@@ -97,4 +171,5 @@ if (audio) {
   });
 
   updateProgress();
+  void loadLyrics(lyricsBlock?.dataset.lyricsSrc || "");
 }
