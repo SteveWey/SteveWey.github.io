@@ -2,7 +2,7 @@ export const site = {
   title: "个人博客",
   subtitle: "PERSONAL BLOG",
   description: "一个自用的个人博客",
-  lastUpdated: "2026-11-15",
+  lastUpdated: "2026-11-16",
   github: "https://github.com/SteveWey",
 };
 
