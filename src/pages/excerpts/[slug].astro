@@ -20,6 +20,7 @@ const next = index >= 0 && index < excerpts.length - 1 ? excerpts[index + 1] : u
 const { title, text, source, sourceTitle, tags, status, date, updated } = entry.data;
 const { Content } = await render(entry);
 const hasBody = Boolean(entry.body?.trim());
+const sourceMatch = source.match(/^\[([^\]]+)\]\((https?:\/\/[^)]+)\)$/);
 ---
 
 <BaseLayout
@@ -66,7 +67,7 @@ const hasBody = Boolean(entry.body?.trim());
       )}
 
       <dl class="excerpt-source-list">
-        <div><dt>出处</dt><dd>{source}</dd></div>
+        <div><dt>出处</dt><dd>{sourceMatch ? <a href={sourceMatch[2]} target="_blank" rel="noreferrer">{sourceMatch[1]}</a> : source}</dd></div>
         {sourceTitle && <div><dt>篇目</dt><dd>{sourceTitle}</dd></div>}
         <div><dt>状态</dt><dd>{status}</dd></div>
         <div><dt>日期</dt><dd>{formatDate(updated ?? date, "full")}</dd></div>

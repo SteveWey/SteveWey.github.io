@@ -20,8 +20,16 @@ const plainBody = body
   .trim();
 
 const placeholder = /^(先记|原文较长|一条待验证|正文待|原文待)/.test((text ?? "").trim());
-const preview = !placeholder && text ? text : plainBody.slice(0, 220);
-const truncated = !text && plainBody.length > 220;
+const rawPreview = !placeholder && text ? text : plainBody;
+const preview = rawPreview
+  .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
+  .replace(/[*_>`~]/g, " ")
+  .replace(/\s+/g, " ")
+  .trim()
+  .slice(0, 180);
+const truncated = rawPreview.length > 180;
+const sourceMatch = source.match(/^\[([^\]]+)\]\((https?:\/\/[^)]+)\)$/);
+const sourceLabel = sourceMatch ? sourceMatch[1] : source;
 ---
 
 <a
@@ -41,7 +49,7 @@ const truncated = !text && plainBody.length > 220;
   <h3 class="excerpt-title">{title}</h3>
   {preview && <p class="excerpt-text">{preview}{truncated ? "…" : ""}</p>}
   <div class="excerpt-foot">
-    <span class="excerpt-source">{source}</span>
+    <span class="excerpt-source">{sourceLabel}</span>
     <time class="excerpt-date" datetime={date.toISOString()}>{formatDate(date)}</time>
   </div>
 </a>

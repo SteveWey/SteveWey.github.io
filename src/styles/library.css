@@ -3088,3 +3088,9 @@ body.sidebar-open .palette-fab {
   border-radius: var(--radius-sm);
   background: var(--color-surface);
 }
+
+.excerpt-source-list a {
+  color: var(--color-accent-ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
