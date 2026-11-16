@@ -3066,3 +3066,25 @@ body.sidebar-open .palette-fab {
   }
 }
 
+
+.excerpt-prose {
+  max-width: 760px;
+}
+
+.excerpt-prose h1 {
+  margin-top: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.excerpt-prose img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 22px auto;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+}

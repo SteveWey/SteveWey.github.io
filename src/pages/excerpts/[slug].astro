@@ -1,4 +1,5 @@
 ---
+import { render } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getExcerpts, formatDate } from "../../lib/content";
 import { withBase } from "../../lib/url";
@@ -17,11 +18,13 @@ const index = excerpts.findIndex((item) => item.id === entry.id);
 const prev = index > 0 ? excerpts[index - 1] : undefined;
 const next = index >= 0 && index < excerpts.length - 1 ? excerpts[index + 1] : undefined;
 const { title, text, source, sourceTitle, tags, status, date, updated } = entry.data;
+const { Content } = await render(entry);
+const hasBody = Boolean(entry.body?.trim());
 ---
 
 <BaseLayout
   title={`${title} · 摘录 · 个人博客`}
-  description={text ?? source}
+  description={text || source}
   active="excerpts"
   path="LIBRARY / EXCERPTS"
   backHref="/excerpts/"
@@ -52,7 +55,15 @@ const { title, text, source, sourceTitle, tags, status, date, updated } = entry.
     </header>
 
     <div class="excerpt-detail-body">
-      {text ? <blockquote class="excerpt-quote">{text}</blockquote> : <p class="empty-state">这条摘录还没有正文。</p>}
+      {hasBody ? (
+        <div class="prose excerpt-prose">
+          <Content />
+        </div>
+      ) : text ? (
+        <blockquote class="excerpt-quote">{text}</blockquote>
+      ) : (
+        <p class="empty-state">这条摘录还没有正文。</p>
+      )}
 
       <dl class="excerpt-source-list">
         <div><dt>出处</dt><dd>{source}</dd></div>

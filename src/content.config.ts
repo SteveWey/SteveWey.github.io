@@ -18,6 +18,7 @@ const notes = defineCollection({
     date: z.coerce.date(),
     updated: z.coerce.date().optional(),
     tags: z.array(z.string()).default([]),
+    related: z.array(z.string()).optional(),
     status: z.string().default("已整理"),
     draft: z.boolean().default(false),
   }),

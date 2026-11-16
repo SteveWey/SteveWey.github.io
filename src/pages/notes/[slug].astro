@@ -1,7 +1,7 @@
 ---
 import { render } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getNotes, formatDate, readingTime } from "../../lib/content";
+import { getNotes, formatDate, readingTime, type NoteEntry } from "../../lib/content";
 import { withBase } from "../../lib/url";
 import "katex/dist/katex.min.css";
 
@@ -23,14 +23,25 @@ const { Content, headings } = await render(entry);
 const toc = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
 const words = entry.body ?? "";
 
-const related = notes
-  .filter((note) => note.id !== entry.id)
-  .filter(
-    (note) =>
-      note.data.kind === entry.data.kind ||
-      note.data.tags.some((tag) => entry.data.tags.includes(tag))
-  )
-  .slice(0, 2);
+const related = (() => {
+  const manual = entry.data.related;
+  if (manual) {
+    const byId = new Map(notes.map((note) => [note.id, note]));
+    return manual
+      .map((id) => byId.get(id))
+      .filter((note): note is NoteEntry => note !== undefined && note.id !== entry.id)
+      .slice(0, 2);
+  }
+
+  return notes
+    .filter((note) => note.id !== entry.id)
+    .filter(
+      (note) =>
+        note.data.kind === entry.data.kind ||
+        note.data.tags.some((tag) => entry.data.tags.includes(tag))
+    )
+    .slice(0, 2);
+})();
 ---
 
 <BaseLayout
@@ -84,7 +95,7 @@ const related = notes
             <div class="related-list">
               {related.map((note) => (
                 <a class="related-item" href={withBase(`/notes/${note.id}/`)}>
-                  <small>{note.data.kind === "tech" ? "技术笔记" : "学习笔记"} · {formatDate(note.data.date)}</small>
+                  <small>{note.data.kind === "tech" ? "技术笔记" : "学习笔记"} · {formatDate(note.data.updated ?? note.data.date)}</small>
                   <strong>{note.data.title}</strong>
                 </a>
               ))}
