@@ -78,22 +78,10 @@ export async function getThreadsWithNotes(): Promise<
   Array<Thread & { noteEntries: NoteEntry[] }>
 > {
   const notes = await getNotes();
-  const bySlug = new Map(notes.map((note) => [getEntrySlug(note), note]));
-
-  for (const thread of threads) {
-    const missing = thread.notes.filter((slug) => !bySlug.has(slug));
-    if (missing.length > 0) {
-      throw new Error(
-        `threads.ts 中的「${thread.title}」引用了不存在的笔记 slug：${missing.join(", ")}`
-      );
-    }
-  }
 
   return threads.map((thread) => ({
     ...thread,
-    noteEntries: thread.notes
-      .map((slug) => bySlug.get(slug))
-      .filter((note): note is NoteEntry => Boolean(note)),
+    noteEntries: notes.filter((note) => note.data.tags.includes(thread.tag)),
   }));
 }
 

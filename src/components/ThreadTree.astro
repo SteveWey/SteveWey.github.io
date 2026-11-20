@@ -8,6 +8,7 @@ interface Props {
     id: string;
     title: string;
     description?: string;
+    tag: string;
     noteEntries: NoteEntry[];
   }>;
 }
@@ -30,13 +31,15 @@ const { threads } = Astro.props;
         <section class="thread-branch">
           <div class="thread-branch-head">
             <span class="branch-index">{String(index + 1).padStart(2, "0")}</span>
-            <h2 class="branch-title">{thread.title}</h2>
+            <h2 class="branch-title">
+              <a href={withBase(`/notes/?tag=${encodeURIComponent(thread.tag)}`)}>{thread.title}</a>
+            </h2>
             <span class="branch-count">{String(thread.noteEntries.length).padStart(2, "0")} NOTES</span>
           </div>
           {thread.description && <p class="branch-desc">{thread.description}</p>}
           <div class="branch-leaves">
             {thread.noteEntries.length > 0 ? (
-              thread.noteEntries.map((note) => (
+              thread.noteEntries.slice(0, 2).map((note) => (
                 <a class="branch-leaf" href={withBase(`/notes/${getEntrySlug(note)}/`)}>
                   {note.data.title}
                   <span>{formatDate(note.data.updated ?? note.data.date)}</span>

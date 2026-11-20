@@ -4,7 +4,7 @@ description: "关系模型、SQL、索引和事务的课程笔记入口。"
 kind: "study"
 date: 2026-06-27
 updated: 2026-06-27
-tags: ["数据库", "SQL"]
+tags: ["数据库", "SQL", "编程"]
 status: "待补全"
 draft: false
 ---
