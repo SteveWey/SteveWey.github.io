@@ -1985,7 +1985,10 @@ body.menu-open .palette-fab {
 }
 
 .prose .katex-display {
-  margin: 0;
+  margin: 1.9em 0;
+  padding: 4px 0;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .prose .katex-display > .katex > .katex-html > .tag {
