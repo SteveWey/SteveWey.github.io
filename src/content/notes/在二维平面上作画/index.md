@@ -67,8 +67,8 @@ $$
 
 $$
 \begin{align*}
-    d_1=y_{real}-y_k  \\
-    d_2 = (y_k+1)-y_{real} 
+    d_1 & =y_{real}-y_k  \\
+    d_2 & = (y_k+1)-y_{real} 
 \end{align*}
 $$
 
@@ -76,7 +76,7 @@ $$
 
 $$
 \begin{align*}
-    d_1 - d_2 = (y_{real}-y_k)-[(y_k+1-y_{real})] \\ d_1-d_2=2y_{real}-2y_k-1 
+    d_1 - d_2 & = (y_{real}-y_k)-[(y_k+1-y_{real})] \\ d_1-d_2 & =2y_{real}-2y_k-1 
 \end{align*}
 $$
 
@@ -113,8 +113,8 @@ $$
 计算下一个决策变量 $p_{k+1}$ （此时 $x_{k+1}=x_k+1$ ）：
 $$
 \begin{align*}
-    p_{k+1} = 2\Delta y(x_{k+1}+1-x_0)+2\Delta x(y_0-y_{k+1})-\Delta x\\
-    p_{k+1} = 2\Delta y(x_k+2-x_0)+2\Delta x(y_0-y_{k+1})-\Delta x
+    p_{k+1} & = 2\Delta y(x_{k+1}+1-x_0)+2\Delta x(y_0-y_{k+1})-\Delta x\\
+    p_{k+1} & = 2\Delta y(x_k+2-x_0)+2\Delta x(y_0-y_{k+1})-\Delta x
 \end{align*}
 $$
 
@@ -131,8 +131,8 @@ $$
 
 $$
 \begin{align*}
-    p_{k+1}-p_k = 2\Delta y - 2\Delta x\cdot 0=2\Delta y\\
-    即：p_{k+1}=p_k + 2\Delta y
+    p_{k+1}-p_k & = 2\Delta y - 2\Delta x\cdot 0=2\Delta y \\
+    即：p_{k+1} & =p_k + 2\Delta y
 \end{align*}
 $$
 
@@ -140,8 +140,8 @@ $$
 
 $$
 \begin{align*}
-    p_{k+1}-p_k = 2\Delta y - 2\Delta x\cdot (1)=2\Delta y-2\Delta x\\
-    即：p_{k+1}=p_k + 2\Delta y-2\Delta x
+    p_{k+1}-p_k & = 2\Delta y - 2\Delta x\cdot (1)=2\Delta y-2\Delta x\\
+    即：p_{k+1} & =p_k + 2\Delta y-2\Delta x
 \end{align*}
 $$
 
@@ -150,8 +150,8 @@ $$
 同时，将起点 $(x_0,y_0)$ 代入 $(2)$式中：
 $$
 \begin{align*}
-    p_0=2\Delta y(x_0+1-x_0)+2\Delta x(y_0-y_0)-\Delta x \\
-    p_0=2\Delta y - \Delta x
+    p_0 & =2\Delta y(x_0+1-x_0)+2\Delta x(y_0-y_0)-\Delta x \\
+    p_0 & =2\Delta y - \Delta x
 \end{align*}
 $$
 
