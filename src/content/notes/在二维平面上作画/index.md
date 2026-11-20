@@ -1,7 +1,7 @@
 ---
 title: "在二维平面上作画"
 slug: "drawing-2d"
-description: "二维平面作画的草稿。"
+description: ""
 kind: "tech"
 date: 2026-11-16
 tags: ["嵌入式","计算图形学"]
@@ -40,24 +40,71 @@ draft: false
 假设刚画完点 $(x_k,y_k)$ ，准备画下一个点。显然下一个点的X坐标为 $x_{k+1} = x_{k} + 1$ ，但下一个点的Y坐标有两个选项：$(x_k+1，y_k)$、$(x_k+1,y_k+1)$.  
 
 根据直线方程 $y = kx + b$ ，当 $x = x_{k+1}=x_k+1$ 时，理想的Y坐标为
-$$ y_{real} = k(x_k+1)+b $$
-由于 $b=y_0-m\cdot x_0$，代入上式：
-$$ y_{real} = k(x_k+1)+y_0-k\cdot x_0 $$
+
+$$
+\begin{align*}
+    y_{real} = k(x_k+1)+b
+\end{align*}
+$$
+
+由于 $b=y_0-k\cdot x_0$，代入上式：
+
+$$
+\begin{align*}
+    y_{real} = k(x_k+1)+y_0-k\cdot x_0
+\end{align*}
+$$
+
 化简得：
-$$ y_{real}=k(x_k+1-x_0)+y_0 \tag{1}$$
+
+$$
+\begin{align}
+    y_{real}=k(x_k+1-x_0)+y_0 \tag{1}
+\end{align}
+$$
+
 计算$(x_k+1，y_k)$、$(x_k+1,y_k+1)$两点距离：
+
 $$
-     d_1=y_{real}-y_k  \\
-     d_2 = (y_k+1)-u_{real} 
+\begin{align*}
+    d_1=y_{real}-y_k  \\
+    d_2 = (y_k+1)-y_{real} 
+\end{align*}
 $$
+
 为了判断谁更近，我们比较 $d_1$ 和 $d_2$。如果 $d_1 < d_2$ ，选下方的点；如果$d_1 > d_2$ ，选上方的点。
-$$ d_1 - d_2 = (y_{real}-y_k)-[(y_k+1-y_{real})] \\ d_1-d_2=2y_{real}-2y_k-1 $$
+
+$$
+\begin{align*}
+    d_1 - d_2 = (y_{real}-y_k)-[(y_k+1-y_{real})] \\ d_1-d_2=2y_{real}-2y_k-1 
+\end{align*}
+$$
+
 将 $(1)$ 式和 $k=\frac{\Delta y}{\Delta x}$ 代入：
-$$ d_1 - d_2 = 2 \left( \frac{\Delta y}{\Delta x} (x_k + 1 - x_0) + y_0 \right) - 2y_k - 1 $$
+
+$$
+\begin{align*}
+    d_1 - d_2 = 2 \left( \frac{\Delta y}{\Delta x} (x_k + 1 - x_0) + y_0 \right) - 2y_k - 1 
+\end{align*}
+$$
+
 两边同乘 $\Delta x$，$\Delta x > 0$：
-$$\Delta x (d_1 - d_2) = 2\Delta y (x_k + 1 - x_0) + 2\Delta x (y_0 - y_k) - \Delta x$$
+
+$$
+\begin{align*}
+    \Delta x (d_1 - d_2) = 2\Delta y (x_k + 1 - x_0) + 2\Delta x (y_0 - y_k) - \Delta x
+\end{align*}
+$$
+
 化简得：
-$$p_k = 2\Delta y (x_k + 1 - x_0) + 2\Delta x (y_0 - y_k) - \Delta x \tag{2}$$
+
+$$
+\begin{align}
+    p_k = 2\Delta y (x_k + 1 - x_0) + 2\Delta x (y_0 - y_k) - \Delta x \tag{2}
+\end{align}
+$$
+
+
 分析可得：
 - 如果 $p_k < 0$，说明 $d_1 < d_2$，我们要选下方的点 $y_{k+1} = y_k$；
 - 如果 $p_k \geq 0$ ，说明 $d_1 \geq d_2$ ，我们要选上方的点 $y_{k+1} = y_k + 1$。
@@ -65,25 +112,47 @@ $$p_k = 2\Delta y (x_k + 1 - x_0) + 2\Delta x (y_0 - y_k) - \Delta x \tag{2}$$
 虽然有了 $p_k$ ，但每次计算都要套一遍公式，太慢了。我们需要找规律。
 计算下一个决策变量 $p_{k+1}$ （此时 $x_{k+1}=x_k+1$ ）：
 $$
-p_{k+1} = 2\Delta y(x_{k+1}+1-x_0)+2\Delta x(y_0-y_{k+1})-\Delta x\\
-p_{k+1} = 2\Delta y(x_k+2-x_0)+2\Delta x(y_0-y_{k+1})-\Delta x
+\begin{align*}
+    p_{k+1} = 2\Delta y(x_{k+1}+1-x_0)+2\Delta x(y_0-y_{k+1})-\Delta x\\
+    p_{k+1} = 2\Delta y(x_k+2-x_0)+2\Delta x(y_0-y_{k+1})-\Delta x
+\end{align*}
 $$
+
 令 $p_{k+1}-p_{k}$：
+
 $$
-p_{k+1}-p_k = 2\Delta y - 2\Delta x(y_{k+1}-y_k)
+\begin{align*}
+    p_{k+1}-p_k = 2\Delta y - 2\Delta x(y_{k+1}-y_k)
+\end{align*}
 $$
+
 分情况讨论：  
 1. 如果之前 $p_k < 0$：那么 $y_{k+1}=y_k$。
-$$p_{k+1}-p_k = 2\Delta y - 2\Delta x\cdot 0=2\Delta y\\即：p_{k+1}=p_k + 2\Delta y$$
-2. 如果之前 $p_k \geq 0$：那么 $y_{k+1}=y_k +1$。 
-$$p_{k+1}-p_k = 2\Delta y - 2\Delta x\cdot (1)=2\Delta y-2\Delta x\\即：p_{k+1}=p_k + 2\Delta y-2\Delta x$$
+
+$$
+\begin{align*}
+    p_{k+1}-p_k = 2\Delta y - 2\Delta x\cdot 0=2\Delta y\\
+    即：p_{k+1}=p_k + 2\Delta y
+\end{align*}
+$$
+
+2. 如果之前 $p_k \geq 0$：那么 $y_{k+1}=y_k +1$。
+
+$$
+\begin{align*}
+    p_{k+1}-p_k = 2\Delta y - 2\Delta x\cdot (1)=2\Delta y-2\Delta x\\
+    即：p_{k+1}=p_k + 2\Delta y-2\Delta x
+\end{align*}
+$$
 
 因此，只需要拿上一个 $p_{k-1}$ 加一个常数就可以得到 ${p_k}$ 的值。
 
 同时，将起点 $(x_0,y_0)$ 代入 $(2)$式中：
 $$
-p_0=2\Delta y(x_0+1-x_0)+2\Delta x(y_0-y_0)-\Delta x \\
-p_0=2\Delta y - \Delta x
+\begin{align*}
+    p_0=2\Delta y(x_0+1-x_0)+2\Delta x(y_0-y_0)-\Delta x \\
+    p_0=2\Delta y - \Delta x
+\end{align*}
 $$
 
 至此，我们完成了Bresenham 算法在$0 \le k \le 1$的情况下的推导过程。
