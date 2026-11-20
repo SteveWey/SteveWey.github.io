@@ -3,7 +3,7 @@ title: "在二维平面上作画"
 slug: "drawing-2d"
 description: ""
 kind: "tech"
-date: 2026-11-16
+date: 2026-11-20
 tags: ["嵌入式","计算图形学"]
 status: "草稿"
 draft: false
