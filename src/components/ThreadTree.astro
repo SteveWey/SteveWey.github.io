@@ -1,6 +1,6 @@
 ---
 import type { NoteEntry } from "../lib/content";
-import { formatDate } from "../lib/content";
+import { formatDate, getEntrySlug } from "../lib/content";
 import { withBase } from "../lib/url";
 
 interface Props {
@@ -37,7 +37,7 @@ const { threads } = Astro.props;
           <div class="branch-leaves">
             {thread.noteEntries.length > 0 ? (
               thread.noteEntries.map((note) => (
-                <a class="branch-leaf" href={withBase(`/notes/${note.id}/`)}>
+                <a class="branch-leaf" href={withBase(`/notes/${getEntrySlug(note)}/`)}>
                   {note.data.title}
                   <span>{formatDate(note.data.updated ?? note.data.date)}</span>
                 </a>

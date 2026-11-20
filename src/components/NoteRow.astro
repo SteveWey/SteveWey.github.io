@@ -1,6 +1,6 @@
 ---
 import type { NoteEntry } from "../lib/content";
-import { formatDate } from "../lib/content";
+import { formatDate, getEntrySlug } from "../lib/content";
 import { withBase } from "../lib/url";
 
 interface Props {
@@ -12,7 +12,7 @@ const { title, description, kind, tags, date, updated } = entry.data;
 
 <a
   class="note-row"
-  href={withBase(`/notes/${entry.id}/`)}
+  href={withBase(`/notes/${getEntrySlug(entry)}/`)}
   data-search={`${title} ${description} ${tags.join(" ")}`}
   data-tags={tags.join(",")}
   data-kind={kind}

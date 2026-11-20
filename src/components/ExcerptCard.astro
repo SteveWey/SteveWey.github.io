@@ -1,6 +1,6 @@
 ---
 import type { ExcerptEntry } from "../lib/content";
-import { formatDate } from "../lib/content";
+import { formatDate, getEntrySlug } from "../lib/content";
 import { withBase } from "../lib/url";
 
 interface Props {
@@ -26,16 +26,16 @@ const preview = rawPreview
   .replace(/[*_>`~]/g, " ")
   .replace(/\s+/g, " ")
   .trim()
-  .slice(0, 180);
-const truncated = rawPreview.length > 180;
+  .slice(0, 100);
+const truncated = rawPreview.length > 100;
 const sourceMatch = source.match(/^\[([^\]]+)\]\((https?:\/\/[^)]+)\)$/);
 const sourceLabel = sourceMatch ? sourceMatch[1] : source;
 ---
 
 <a
   class="excerpt-card"
-  href={withBase(`/excerpts/${entry.id}/`)}
-  id={entry.id}
+  href={withBase(`/excerpts/${getEntrySlug(entry)}/`)}
+  id={getEntrySlug(entry)}
   data-search={`${title} ${preview} ${source} ${tags.join(" ")}`}
   data-tags={tags.join(",")}
   data-kind="excerpt"

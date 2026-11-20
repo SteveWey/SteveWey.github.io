@@ -6,6 +6,26 @@ export type ExcerptEntry = CollectionEntry<"excerpts">;
 export type CollectionEntryType = CollectionEntry<"collections">;
 export type MusicEntry = CollectionEntry<"music">;
 
+type Sluggable = { id: string; data: { slug?: string } };
+
+export function getEntrySlug(entry: Sluggable): string {
+  return entry.data.slug ?? entry.id;
+}
+
+function assertUniqueSlugs(entries: Sluggable[], label: string): void {
+  const seen = new Map<string, string>();
+  for (const entry of entries) {
+    const slug = getEntrySlug(entry);
+    const previous = seen.get(slug);
+    if (previous) {
+      throw new Error(
+        `[${label}] slug 重复：「${previous}」和「${entry.id}」都使用 "${slug}"`
+      );
+    }
+    seen.set(slug, entry.id);
+  }
+}
+
 export type ActivityItem = {
   type: "音乐" | "笔记" | "摘抄" | "收藏";
   title: string;
@@ -22,13 +42,17 @@ const byDateDesc = <T extends { data: { date: Date; updated?: Date } }>(a: T, b:
   timestamp(b) - timestamp(a);
 
 export async function getNotes(): Promise<NoteEntry[]> {
-  return (await getCollection("notes", ({ data }) => !data.draft)).sort(byDateDesc);
+  const notes = (await getCollection("notes", ({ data }) => !data.draft)).sort(byDateDesc);
+  assertUniqueSlugs(notes, "notes");
+  return notes;
 }
 
 export async function getExcerpts(): Promise<ExcerptEntry[]> {
-  return (await getCollection("excerpts")).sort(
+  const excerpts = (await getCollection("excerpts")).sort(
     (a, b) => byDateDesc(a, b) || a.data.order - b.data.order
   );
+  assertUniqueSlugs(excerpts, "excerpts");
+  return excerpts;
 }
 
 export async function getCollections(): Promise<CollectionEntryType[]> {
@@ -41,7 +65,9 @@ export async function getMusic(): Promise<MusicEntry[]> {
     numeric: true,
     sensitivity: "base",
   });
-  return music.sort((a, b) => collator.compare(a.data.title, b.data.title));
+  const sorted = music.sort((a, b) => collator.compare(a.data.title, b.data.title));
+  assertUniqueSlugs(sorted, "music");
+  return sorted;
 }
 
 export async function getFavoriteMusic(): Promise<MusicEntry[]> {
@@ -52,13 +78,13 @@ export async function getThreadsWithNotes(): Promise<
   Array<Thread & { noteEntries: NoteEntry[] }>
 > {
   const notes = await getNotes();
-  const byId = new Map(notes.map((note) => [note.id, note]));
+  const bySlug = new Map(notes.map((note) => [getEntrySlug(note), note]));
 
   for (const thread of threads) {
-    const missing = thread.notes.filter((slug) => !byId.has(slug));
+    const missing = thread.notes.filter((slug) => !bySlug.has(slug));
     if (missing.length > 0) {
       throw new Error(
-        `threads.ts 中的「${thread.title}」引用了不存在的笔记：${missing.join(", ")}`
+        `threads.ts 中的「${thread.title}」引用了不存在的笔记 slug：${missing.join(", ")}`
       );
     }
   }
@@ -66,7 +92,7 @@ export async function getThreadsWithNotes(): Promise<
   return threads.map((thread) => ({
     ...thread,
     noteEntries: thread.notes
-      .map((slug) => byId.get(slug))
+      .map((slug) => bySlug.get(slug))
       .filter((note): note is NoteEntry => Boolean(note)),
   }));
 }
@@ -84,7 +110,7 @@ export async function recentActivity(limit = 6): Promise<ActivityItem[]> {
       type: "笔记" as const,
       title: note.data.title,
       description: note.data.description,
-      href: `/notes/${note.id}/`,
+      href: `/notes/${getEntrySlug(note)}/`,
       date: note.data.updated ?? note.data.date,
       tags: note.data.tags,
     })),
@@ -92,7 +118,7 @@ export async function recentActivity(limit = 6): Promise<ActivityItem[]> {
       type: "摘抄" as const,
       title: excerpt.data.title,
       description: excerpt.data.source,
-      href: `/excerpts/${excerpt.id}/`,
+      href: `/excerpts/${getEntrySlug(excerpt)}/`,
       date: excerpt.data.updated ?? excerpt.data.date,
       tags: excerpt.data.tags,
     })),

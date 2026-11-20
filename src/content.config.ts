@@ -13,6 +13,7 @@ const notes = defineCollection({
   }),
   schema: z.object({
     title: z.string(),
+    slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/).optional(),
     description: z.string(),
     kind: z.enum(["tech", "study"]),
     date: z.coerce.date(),
@@ -32,6 +33,7 @@ const excerpts = defineCollection({
   }),
   schema: z.object({
     title: z.string(),
+    slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/).optional(),
     text: z.string().optional(),
     source: z.string(),
     sourceTitle: z.string().optional(),
@@ -71,6 +73,7 @@ const music = defineCollection({
   }),
   schema: z.object({
     title: z.string(),
+    slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/).optional(),
     artist: z.string(),
     album: z.string().default(""),
     genre: z.string().default(""),

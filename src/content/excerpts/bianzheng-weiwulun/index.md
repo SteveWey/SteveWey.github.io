@@ -1,9 +1,9 @@
 ﻿---
 title: "辩证唯物论——（讲授提纲）"
-text: "先记篇目和版本，正文待整理。"
+text: ""
 source: "[辩证唯物论](https://www.marxists.org/chinese/maozedong/1937/index.htm)"
-tags: ["哲学"]
-status: "待补全"
+tags: ["哲学","毛泽东思想"]
+status: "已归档"
 date: 2026-6-19
 order: 7
 ---

@@ -1,21 +1,21 @@
 ---
 import { render } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getNotes, formatDate, readingTime, type NoteEntry } from "../../lib/content";
+import { getNotes, formatDate, readingTime, getEntrySlug, type NoteEntry } from "../../lib/content";
 import { withBase } from "../../lib/url";
 import "katex/dist/katex.min.css";
 
 export async function getStaticPaths() {
   const notes = await getNotes();
   return notes.map((entry) => ({
-    params: { slug: entry.id },
+    params: { slug: getEntrySlug(entry) },
     props: { entry },
   }));
 }
 
 const { entry } = Astro.props;
 const notes = await getNotes();
-const index = notes.findIndex((note) => note.id === entry.id);
+const index = notes.findIndex((note) => getEntrySlug(note) === getEntrySlug(entry));
 const prev = index > 0 ? notes[index - 1] : undefined;
 const next = index >= 0 && index < notes.length - 1 ? notes[index + 1] : undefined;
 
@@ -26,15 +26,15 @@ const words = entry.body ?? "";
 const related = (() => {
   const manual = entry.data.related;
   if (manual) {
-    const byId = new Map(notes.map((note) => [note.id, note]));
+    const bySlug = new Map(notes.map((note) => [getEntrySlug(note), note]));
     return manual
-      .map((id) => byId.get(id))
-      .filter((note): note is NoteEntry => note !== undefined && note.id !== entry.id)
+      .map((slug) => bySlug.get(slug))
+      .filter((note): note is NoteEntry => note !== undefined && getEntrySlug(note) !== getEntrySlug(entry))
       .slice(0, 2);
   }
 
   return notes
-    .filter((note) => note.id !== entry.id)
+    .filter((note) => getEntrySlug(note) !== getEntrySlug(entry))
     .filter(
       (note) =>
         note.data.kind === entry.data.kind ||
@@ -94,7 +94,7 @@ const related = (() => {
             <p class="related-label">RELATED NOTES</p>
             <div class="related-list">
               {related.map((note) => (
-                <a class="related-item" href={withBase(`/notes/${note.id}/`)}>
+                <a class="related-item" href={withBase(`/notes/${getEntrySlug(note)}/`)}>
                   <small>{note.data.kind === "tech" ? "技术笔记" : "学习笔记"} · {formatDate(note.data.updated ?? note.data.date)}</small>
                   <strong>{note.data.title}</strong>
                 </a>
@@ -111,6 +111,7 @@ const related = (() => {
           <p class="note-info-label">文件信息</p>
           <dl>
             <div><dt>路径</dt><dd><code>notes/{entry.id}/index.md</code></dd></div>
+            <div><dt>Slug</dt><dd><code>{getEntrySlug(entry)}</code></dd></div>
             <div><dt>类型</dt><dd>{entry.data.kind === "tech" ? "技术笔记" : "学习笔记"}</dd></div>
             <div><dt>更新</dt><dd>{formatDate(entry.data.updated ?? entry.data.date, "full")}</dd></div>
             <div><dt>状态</dt><dd>{entry.data.status}</dd></div>
@@ -135,13 +136,13 @@ const related = (() => {
     {(prev || next) && (
       <nav class="post-nav" aria-label="相邻笔记">
         {prev ? (
-          <a href={withBase(`/notes/${prev.id}/`)}>
+          <a href={withBase(`/notes/${getEntrySlug(prev)}/`)}>
             <small>← PREVIOUS</small>
             <strong>{prev.data.title}</strong>
           </a>
         ) : <span />}
         {next ? (
-          <a href={withBase(`/notes/${next.id}/`)}>
+          <a href={withBase(`/notes/${getEntrySlug(next)}/`)}>
             <small>NEXT →</small>
             <strong>{next.data.title}</strong>
           </a>

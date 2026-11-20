@@ -1,20 +1,20 @@
 ---
 import { render } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getExcerpts, formatDate } from "../../lib/content";
+import { getExcerpts, formatDate, getEntrySlug } from "../../lib/content";
 import { withBase } from "../../lib/url";
 
 export async function getStaticPaths() {
   const excerpts = await getExcerpts();
   return excerpts.map((entry) => ({
-    params: { slug: entry.id },
+    params: { slug: getEntrySlug(entry) },
     props: { entry },
   }));
 }
 
 const { entry } = Astro.props;
 const excerpts = await getExcerpts();
-const index = excerpts.findIndex((item) => item.id === entry.id);
+const index = excerpts.findIndex((item) => getEntrySlug(item) === getEntrySlug(entry));
 const prev = index > 0 ? excerpts[index - 1] : undefined;
 const next = index >= 0 && index < excerpts.length - 1 ? excerpts[index + 1] : undefined;
 const { title, text, source, sourceTitle, tags, status, date, updated } = entry.data;
@@ -81,13 +81,13 @@ const sourceMatch = source.match(/^\[([^\]]+)\]\((https?:\/\/[^)]+)\)$/);
     {(prev || next) && (
       <nav class="post-nav" aria-label="相邻摘录">
         {prev ? (
-          <a href={withBase(`/excerpts/${prev.id}/`)}>
+          <a href={withBase(`/excerpts/${getEntrySlug(prev)}/`)}>
             <small>← PREVIOUS</small>
             <strong>{prev.data.title}</strong>
           </a>
         ) : <span />}
         {next ? (
-          <a href={withBase(`/excerpts/${next.id}/`)}>
+          <a href={withBase(`/excerpts/${getEntrySlug(next)}/`)}>
             <small>NEXT →</small>
             <strong>{next.data.title}</strong>
           </a>

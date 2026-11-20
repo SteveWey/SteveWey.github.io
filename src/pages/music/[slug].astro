@@ -1,20 +1,20 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import MusicPlayer from "../../components/MusicPlayer.astro";
-import { getMusic, formatDate } from "../../lib/content";
+import { getMusic, formatDate, getEntrySlug } from "../../lib/content";
 import { withBase } from "../../lib/url";
 
 export async function getStaticPaths() {
   const tracks = await getMusic();
   return tracks.map((entry) => ({
-    params: { slug: entry.id },
+    params: { slug: getEntrySlug(entry) },
     props: { entry },
   }));
 }
 
 const { entry } = Astro.props;
 const tracks = await getMusic();
-const index = tracks.findIndex((track) => track.id === entry.id);
+const index = tracks.findIndex((track) => getEntrySlug(track) === getEntrySlug(entry));
 const prev = index > 0 ? tracks[index - 1] : undefined;
 const next = index >= 0 && index < tracks.length - 1 ? tracks[index + 1] : undefined;
 const { title, artist, album, genre, cover, duration, tags, favorite, date } = entry.data;
@@ -75,13 +75,13 @@ const coverUrl = cover ? withBase(cover) : "";
     {(prev || next) && (
       <nav class="post-nav" aria-label="相邻曲目">
         {prev ? (
-          <a href={withBase(`/music/${prev.id}/`)}>
+          <a href={withBase(`/music/${getEntrySlug(prev)}/`)}>
             <small>← PREVIOUS</small>
             <strong>{prev.data.title}</strong>
           </a>
         ) : <span />}
         {next ? (
-          <a href={withBase(`/music/${next.id}/`)}>
+          <a href={withBase(`/music/${getEntrySlug(next)}/`)}>
             <small>NEXT →</small>
             <strong>{next.data.title}</strong>
           </a>

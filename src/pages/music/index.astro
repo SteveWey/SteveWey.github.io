@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import MusicPlayer from "../../components/MusicPlayer.astro";
-import { getMusic } from "../../lib/content";
+import { getMusic, getEntrySlug } from "../../lib/content";
 import { withBase } from "../../lib/url";
 
 const tracks = await getMusic();
@@ -87,7 +87,7 @@ const genres = [...new Set(tracks.map((track) => track.data.genre).filter(Boolea
                 <span class="archive-genre">{track.data.genre || "—"}</span>
                 <span class="archive-duration">{track.data.duration}</span>
               </button>
-              <a class="archive-detail" href={withBase(`/music/${track.id}/`)} aria-label={`查看 ${track.data.title} 详情`}>↗</a>
+              <a class="archive-detail" href={withBase(`/music/${getEntrySlug(track)}/`)} aria-label={`查看 ${track.data.title} 详情`}>↗</a>
             </div>
           );
         })}
