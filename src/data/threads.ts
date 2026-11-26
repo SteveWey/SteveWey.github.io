@@ -10,12 +10,12 @@ export const threads: Thread[] = [
     id: "godot",
     title: "Godot Engine",
     description: "",
-    tag: "Godot",
+    tag: "Godot Engine",
   },
   {
     id: "programming",
     title: "编程",
-    description: "数据库、TypeScript 和日常工具",
+    description: "",
     tag: "编程",
   },
   {
