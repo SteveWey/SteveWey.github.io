@@ -3103,3 +3103,52 @@ body.sidebar-open .palette-fab {
   text-decoration: underline;
   text-underline-offset: 2px;
 }
+
+/* ---------- Mermaid ---------- */
+.mermaid-diagram {
+  margin: 1.8em 0;
+  padding: 18px 16px;
+  overflow-x: auto;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  text-align: center;
+}
+
+.mermaid-diagram .mermaid {
+  display: flex;
+  justify-content: center;
+  min-width: 520px;
+}
+
+.mermaid-diagram svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.mermaid-diagram--error {
+  border-color: color-mix(in srgb, #b65236 45%, var(--color-line));
+  background: color-mix(in srgb, #b65236 5%, var(--color-surface));
+}
+
+.mermaid-error {
+  max-width: 100%;
+  overflow-x: auto;
+  color: #8e3b27;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  line-height: 1.7;
+  text-align: left;
+  white-space: pre-wrap;
+}
+
+@media (max-width: 760px) {
+  .mermaid-diagram {
+    margin-inline: -4px;
+    padding: 12px 4px;
+  }
+
+  .mermaid-diagram .mermaid {
+    min-width: 440px;
+  }
+}
