@@ -79,7 +79,7 @@ const firstCover = first.data.cover ? withBase(first.data.cover) : "";
 
     {minimal && <MusicLyrics src={first.data.lyrics ? withBase(first.data.lyrics) : ""} />}
 
-    <audio id="music-audio" preload="metadata" src={withBase(first.data.audio)}></audio>
+    <audio id="music-audio" preload="auto" src={withBase(first.data.audio)}></audio>
 
     <button class="mini-player" id="mini-player" type="button" data-music-toggle aria-label="播放" hidden>
       <span

@@ -15,6 +15,7 @@ const lyricsTrack = document.querySelector<HTMLElement>("[data-lyrics-track]");
 type LyricLine = { time: number; text: string };
 let lyricLines: LyricLine[] = [];
 let lyricRequest = 0;
+const lyricsCache = new Map<string, LyricLine[]>();
 
 function parseLrc(source: string): LyricLine[] {
   const lines: LyricLine[] = [];
@@ -94,6 +95,16 @@ async function loadLyrics(src: string): Promise<void> {
     return;
   }
 
+  const cached = lyricsCache.get(src);
+  if (cached && cached.length > 0) {
+    lyricLines = cached;
+    buildLyricsTrack();
+    if (lyricsBlock) lyricsBlock.hidden = false;
+    if (audio) renderLyrics(audio.currentTime || 0);
+    if (!hadLyrics) positionLyrics(0, false);
+    return;
+  }
+
   try {
     const response = await fetch(src);
     if (!response.ok) {
@@ -111,6 +122,7 @@ async function loadLyrics(src: string): Promise<void> {
       }
       return;
     }
+    lyricsCache.set(src, data);
     lyricLines = data;
     buildLyricsTrack();
     if (lyricsBlock) lyricsBlock.hidden = false;
@@ -142,6 +154,11 @@ function showMiniPlayer(): void {
   if (!miniPlayer) return;
   miniPlayer.hidden = false;
   requestAnimationFrame(() => miniPlayer.classList.add("is-visible"));
+}
+
+function primeAudioBuffer(): void {
+  if (!audio) return;
+  audio.preload = "auto";
 }
 
 function updateProgress(): void {
@@ -176,6 +193,7 @@ if (audio) {
   });
 
   audio.addEventListener("play", () => {
+    primeAudioBuffer();
     setMusicButtonState(true);
     showMiniPlayer();
   });
@@ -192,7 +210,9 @@ if (audio) {
     row.addEventListener("click", async () => {
       const src = row.dataset.src;
       if (!src) return;
+      audio.preload = "auto";
       audio.src = src;
+      audio.load();
       if (musicTitle) musicTitle.textContent = row.dataset.title || "未知曲目";
       if (musicArtist) musicArtist.textContent = row.dataset.artist || "";
       if (musicDuration) musicDuration.textContent = row.dataset.duration || "0:00";
