@@ -3,6 +3,7 @@ import sitemap from "@astrojs/sitemap";
 import { unified } from "@astrojs/markdown-remark";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
+import { rehypeImageSize } from "./src/lib/rehype-image-size.mjs";
 
 const rawBase = process.env.BASE_PATH || "/";
 const base = rawBase.endsWith("/") ? rawBase : `${rawBase}/`;
@@ -19,6 +20,7 @@ export default defineConfig({
       remarkPlugins: [remarkMath],
       rehypePlugins: [
         [rehypeKatex, { throwOnError: false, strict: false }],
+        rehypeImageSize,
       ],
     }),
     shikiConfig: {
