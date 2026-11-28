@@ -34,9 +34,16 @@ const [notes, excerpts, collections, music] = await Promise.all([
   getMusic(),
 ]);
 
+const mainlineTags = new Set(threads.map((thread) => thread.tag));
+const outsideNotes = notes.filter(
+  (note) => !note.data.tags.some((tag) => mainlineTags.has(tag))
+);
+const outsideItems =
+  outsideNotes.length + excerpts.length + collections.length + (music.length > 0 ? 1 : 0);
+
 const counts = {
   mainlines: threads.length,
-  activity: Math.min(6, notes.length + excerpts.length + collections.length + music.length),
+  activity: Math.min(6, outsideItems),
   notes: notes.length,
   excerpts: excerpts.length,
   collections: collections.length,

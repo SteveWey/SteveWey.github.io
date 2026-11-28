@@ -93,8 +93,13 @@ export async function recentActivity(limit = 6): Promise<ActivityItem[]> {
     getMusic(),
   ]);
 
+  const mainlineTags = new Set(threads.map((thread) => thread.tag));
+  const outsideNotes = notes.filter(
+    (note) => !note.data.tags.some((tag) => mainlineTags.has(tag))
+  );
+
   const items: ActivityItem[] = [
-    ...notes.map((note) => ({
+    ...outsideNotes.map((note) => ({
       type: "笔记" as const,
       title: note.data.title,
       description: note.data.description,
